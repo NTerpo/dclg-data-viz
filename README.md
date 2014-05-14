@@ -22,3 +22,8 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 * I've to change the names because I've made it specifically for those datasets.
 * There is no problem when the datasets have the same number of datum
 * SPARQL
+
+### Branch odc-api
+
+* SPARQL query
+* rewriting everything : a single data set => cleaner way to do 
