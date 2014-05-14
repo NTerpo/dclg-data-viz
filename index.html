@@ -43,21 +43,18 @@
     </style>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="http://d3js.org/topojson.v1.min.js"></script>
-    <script src="http://d3js.org/queue.v1.min.js"></script>
 </head>
 
 <body>
     
     <div id="tooltip" class="hidden">
-            <p><strong>Important Label Heading</strong></p>
-            <p><span id="value">100</span>%</p>
     </div>
     
     <script>
         var width = 1000,
             height = 750;
         
-        var padding = 20;
+        var padding = 30;
         
         var limit = 200;
                
@@ -69,124 +66,54 @@
         var color = d3.scale.quantize()
 								.range(["rgb(0,255,0)", "rgb(255,255,0)",
                                 "rgb(255,128,0)", "rgb(255,0,0)"]);
-        queue()
-            .defer(d3.csv, "house-building-starts-tenure.csv")
-            .defer(d3.csv, "house-building-completions-tenure.csv")
-            .await(ready);
+        
+        // Color quantize scale
+		color.domain([0, limit]);
+        
+        
+        // SPARQL query to get data from two sources in a .CSV
+        var datasource = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0A%0D%0ASELECT+%3FrefArea+%3Fobservation+%3FgssCode+%3FauthorityName+%3Fcompletions+%3Fstarts+%3Fobservation2+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fcompletions%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++compl%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A+++++++++++++++++++building%3AcompletionsObs+%3Fcompletions+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fstarts%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A++++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A++++++++++++++++++++starts%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A++++++++++++++++++++building%3AstartsObs+%3Fstarts+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3FauthorityName%29"
+        
+        
+        // Loading data     
+        d3.csv(datasource, function (data) {
             
-        function ready (error, starts, completed) {
+            // Scaling
             var xScale = d3.scale.linear()
-                                    .domain([0, d3.max(starts, function(d) { return d.id; })])
+                                    .domain([0, data.length])
                                     .range([padding, width - padding]);
             var yScale = d3.scale.linear()
-                                    .domain([0, d3.max(starts, function(d) { return d.id; })])
-                                    .range([padding, height - padding]);
+                                    .domain([0, d3.max([
+                                            d3.max(data, function (d) {
+                                                return d.completions ;
+                                            }),
+                                            d3.max(data, function (d) {
+                                                return d.starts ;
+                                            })
+                                        ])
+                                    ])
+                                    .range([height - padding, padding]);
             
+            // correlation => absolute value of the difference between the data we are comparing values
             var correlation = [];
             
-            for (var i = 0; i < starts.length; i++) {
-                correlation.push(Math.abs(starts[i].value - completed[i].value))
+            for (var i = 0; i < data.length; i++) {
+                correlation.push(Math.abs(data[i].completions - data[i].starts))
             }
-            // console.log(correlation);
-            // console.log(correlation.length)
-            console.log(d3.max(correlation));
+            console.log(correlation); 
             
-			// Color quantize scale					
-			color.domain([0, limit]);
-            
-            // Pass starts data to svg
-            svg.selectAll("start.circle")
-                .data(starts)
+            // Pass data to svg
+            svg.selectAll("circles")
+                .data(data)
                 .enter()
                 .append("circle")
-                .attr("cx", function (d) {
-                    return xScale(d.id) ; 
+                .attr("cx", function (d, i) {
+                    return (i * (width / data.length)) + padding ;
                 })
                 .attr("cy", function (d) {
-                    return height - yScale(d.id) + 2 * Math.sqrt(correlation[d.id -1]);
+                    return height - yScale(d.completions) ;
                 })
-                .attr("r", function (d) {
-                    return Math.sqrt(Math.abs(d.value))/5;
-                })
-                .style("fill", function (d) {
-                    if (correlation[d.id -1] == 0) {
-                        return "rgb(0,0,255)"
-                    } else {
-                        return color(correlation[d.id -1]);   
-                    }
-                })
-                .on("mouseover", function(d) {
-
-                    //Get this circle's x/y values, then augment for the tooltip
-                    var xPosition = parseFloat(d3.select(this).attr("cx")) ;
-                    var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 2 ;
-
-                    //Update the tooltip position and value
-                    d3.select("#tooltip")
-                      .style("left", xPosition + "px")
-                      .style("top", yPosition + "px")
-                      .text(d.name + "Council : " + d.value );
-
-                    //Show the tooltip
-                    d3.select("#tooltip").classed("hidden", false);
-                })
-                .on("mouseout", function() {
-
-                    //Hide the tooltip
-                    d3.select("#tooltip").classed("hidden", true);
-
-                });
-                
-                
-            // Pass completed data to svg    
-            svg.selectAll("completed.circle")
-                .data(completed)
-                .enter()
-                .append("circle")
-                .attr("cx", function (d) {
-                    return xScale(d.id) ; 
-                })
-                .attr("cy", function (d) {
-                    return height - yScale(d.id) - 2 * Math.sqrt(correlation[d.id -1]) ;
-                })
-                .attr("r", function (d) {
-                    return Math.sqrt(Math.abs(d.value))/5;
-                })
-                .style("fill", function (d) {
-                    if (correlation[d.id -1] == 0) {
-                        return "rgb(0,0,255)"
-                    } else {
-                        return color(correlation[d.id -1]);   
-                    }
-                })
-                .on("mouseover", function(d) {
-
-                    // Get this circle's x/y values, then augment for the tooltip
-                    var xPosition = parseFloat(d3.select(this).attr("cx")) ;
-                    var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 2 ;
-
-                    // Update the tooltip position and value
-                    d3.select("#tooltip")
-                      .style("left", xPosition + "px")
-                      .style("top", yPosition + "px")
-                      .text(d.name + "Council : " + d.value );
-
-                    // Show the tooltip
-                    d3.select("#tooltip").classed("hidden", false);
-                    
- -->                   // Stroke circle
-                    d3.select(this)
-                        .attr("stroke-width", 1)
-                        .attr("stroke", "black");
-                })
-                .on("mouseout", function() {
-
-                    //Hide the tooltip
-                    d3.select("#tooltip").classed("hidden", true);
-                    d3.select(this)
-                        .attr("stroke", "none");
-
-                }); 
+                .attr("r", 2);
                 
             // Axis
             svg.append("g")
@@ -216,10 +143,8 @@
                 .attr("y", 6)
                 .attr("dy", ".71em")
                 .style("text-anchor", "end")
-                .text("dataset 2");
-            
-        }
-     
+                .text("dataset 2");  
+        });
     </script>
 </body>
 </html>
