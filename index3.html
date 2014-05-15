@@ -53,7 +53,7 @@
     </div>
     
     <script>
-        var width = 4000,
+        var width = 1000,
             height = 1000;
         
         var padding = 30;
@@ -84,15 +84,7 @@
                                     .domain([0, data.length])
                                     .range([padding, width - padding]);
             var yScale = d3.scale.linear()
-                                    .domain([0, d3.max([
-                                            d3.max(data, function (d) {
-                                                return d.completions ;
-                                            }),
-                                            d3.max(data, function (d) {
-                                                return d.starts ;
-                                            })
-                                        ])
-                                    ])
+                                    .domain([0, data.length])
                                     .range([height - padding, padding]);
             
             // correlation => absolute value of the difference between the data we are comparing values
@@ -127,10 +119,12 @@
                 .attr("cx", function (d, i) {
                     return (i * (width / data.length)) + padding + 5 ;
                 })
-                .attr("cy", function (d) {
-                    return yScale(d.starts) ;
+                .attr("cy", function (d, i) {
+                    return height - (i * (width / data.length)) - padding - 5 - 2 * Math.sqrt(correlation[i]);
                 })
-                .attr("r", 5);
+                .attr("r", function (d) {
+                    return Math.sqrt(d.starts)/10;
+                });
             
             
             // Completions circles
@@ -138,10 +132,12 @@
                 .attr("cx", function (d, i) {
                     return (i * (width / data.length)) + padding + 5 ;
                 })
-                .attr("cy", function (d) {
-                    return yScale(d.completions) ;
+                .attr("cy", function (d, i) {
+                    return height - (i * (width / data.length))  - padding - 5 + 2 * Math.sqrt(correlation[i]) ;
                 })
-                .attr("r", 5);
+                .attr("r", function (d) {
+                    return Math.sqrt(d.completions)/10;
+                });
             
                 
             // Over function, called on mouseover

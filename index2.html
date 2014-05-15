@@ -53,7 +53,7 @@
     </div>
     
     <script>
-        var width = 4000,
+        var width = 3000,
             height = 1000;
         
         var padding = 30;
@@ -79,9 +79,19 @@
         // Loading data     
         d3.csv(datasource, function (data) {
             
+            // correlation => absolute value of the difference between the data we are comparing values
+            var correlation = [];
+            
+            for (var i = 0; i < data.length; i++) {
+                correlation.push(Math.abs(data[i].completions - data[i].starts))
+            }
+            
             // Scaling
             var xScale = d3.scale.linear()
-                                    .domain([0, data.length])
+                                    .domain([0, d3.max(data, function (d) {
+                                            return Math.abs(d.completions - d.starts) ;
+                                        })
+                                    ])
                                     .range([padding, width - padding]);
             var yScale = d3.scale.linear()
                                     .domain([0, d3.max([
@@ -94,13 +104,6 @@
                                         ])
                                     ])
                                     .range([height - padding, padding]);
-            
-            // correlation => absolute value of the difference between the data we are comparing values
-            var correlation = [];
-            
-            for (var i = 0; i < data.length; i++) {
-                correlation.push(Math.abs(data[i].completions - data[i].starts))
-            }
             
             var circles = svg.append("g") ;
             
@@ -125,7 +128,7 @@
             // Starts circles
             var startsCircles = gs.append("circle")
                 .attr("cx", function (d, i) {
-                    return (i * (width / data.length)) + padding + 5 ;
+                    return 10 * correlation[i] + padding + 5 ;
                 })
                 .attr("cy", function (d) {
                     return yScale(d.starts) ;
@@ -136,7 +139,7 @@
             // Completions circles
             var completionsCircles = gs.append("circle")
                 .attr("cx", function (d, i) {
-                    return (i * (width / data.length)) + padding + 5 ;
+                    return 10 * correlation[i] + padding + 5 ;
                 })
                 .attr("cy", function (d) {
                     return yScale(d.completions) ;

@@ -19,4 +19,8 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 
 * on("click") function to have different way to sort the scatter plot
 * NOMIS API
- 
+
+### Other viz
+
+* index2.html : X axis is 10 times the absolute value of the difference between values from both datasets
+* index3.html : X axis = 1st dataset, Y axis = 2nd dataset => each couple of points represent one local authority, the farest they are from the diagonal, the more different they are in both datasets, the radius is function of the value.
