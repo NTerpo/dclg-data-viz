@@ -17,10 +17,10 @@
         }
         #tooltip {
                 position: absolute;
-                width: 200px;
+                width: 300px;
                 height: auto;
                 padding: 10px;
-                background-color: white;
+                background-color: linen;
                 -webkit-border-radius: 10px;
                 -moz-border-radius: 10px;
                 border-radius: 10px;
@@ -48,6 +48,8 @@
 <body>
     
     <div id="tooltip" class="hidden">
+        <p>
+        </p>
     </div>
     
     <script>
@@ -99,7 +101,7 @@
             for (var i = 0; i < data.length; i++) {
                 correlation.push(Math.abs(data[i].completions - data[i].starts))
             }
-            console.log(correlation);
+            console.log(correlation[3]);
             
             var circles = svg.append("g") ;
             
@@ -110,30 +112,38 @@
                             .attr("id", function (d, i) {
                                 return i ;
                             })
+                            .style("fill", function (d, i) {
+                                if (correlation[i] == 0) {
+                                    return "rgb(0,0,255)"
+                                } else {
+                                    return color(correlation[i]);   
+                                }
+                            })
                             .on("mouseover", over)
                             .on("mouseout", out);
+            
             
             // Starts circles
             var startsCircles = gs.append("circle")
                 .attr("cx", function (d, i) {
                     return (i * (width / data.length)) + padding + 5 ;
                 })
-                .attr("cy", function (d) {
-                    return yScale(d.starts) ;
+                .attr("cy", function (d, i) {
+                    return yScale(correlation[i]) - 2 * Math.sqrt(correlation[i]) ;
                 })
-                .attr("r", 4)
-                .style("fill", "orange");
+                .attr("r", 4);
+            
             
             // Completions circles
             var completionsCircles = gs.append("circle")
                 .attr("cx", function (d, i) {
                     return (i * (width / data.length)) + padding + 5 ;
                 })
-                .attr("cy", function (d) {
-                    return yScale(d.completions) + 5 ;
+                .attr("cy", function (d, i) {
+                    return yScale(correlation[i]) + 2 * Math.sqrt(correlation[i]) ;
                 })
-                .attr("r", 4)
-                .style("fill", "blue");
+                .attr("r", 4);
+            
                 
             // Over function, called on mouseover
             function over (d, i) {
@@ -149,9 +159,9 @@
                 d3.select("#tooltip")
                     .style("left", xPosition + "px")
                     .style("top", yPosition + "px")
-                    .html(d.authorityName + '</br>' +
-                        "Completions : " + d.completions + '</br>' +
-                        "Starts : " + d.starts 
+                    .html(d.authorityName + '</br>' + '</br>' +
+                        "Completed house building 2012 - 2013 : " +  d.completions + '</br>' +
+                        "Started house building 2012 - 2013 : " + d.starts 
                         );
 
                     // Show the tooltip
@@ -180,7 +190,7 @@
                 .attr("x", width - padding)
                 .attr("y", -6)
                 .style("text-anchor", "end")
-                .text("dataset 1");
+                .text("Local authority");
             
             svg.append("g")
                 .attr("class", "axis") 
@@ -195,7 +205,7 @@
                 .attr("y", 6)
                 .attr("dy", ".71em")
                 .style("text-anchor", "end")
-                .text("dataset 2");  
+                .text("started / completed building house 2012 - 2013");  
         });
     </script>
 </body>
