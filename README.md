@@ -17,7 +17,6 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 
 ### Next step
 
-* on("click") function to have different way to sort the scatter plot
 * NOMIS API
 
 ### Other viz
