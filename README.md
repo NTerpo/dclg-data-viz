@@ -2,6 +2,12 @@
 
 Comparisons of data on housing held by the DCLG with data on housing from other sources, notably the nomisweb.co.uk site : NOMIS API.
 
+## Demo
+
+* [Visualization_1](http://jsfiddle.net/nicolasterpolilli/x6HJq/)
+* [Visualization_2](http://jsfiddle.net/nicolasterpolilli/J74am/embedded/result/)
+* [Visualization_3](http://jsfiddle.net/nicolasterpolilli/g6cKK/)
+
 ### First step
 
 * SPARQL query to get data from 2 datasets :
