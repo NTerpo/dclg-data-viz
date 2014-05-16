@@ -81,10 +81,12 @@
             
             // Scaling
             var xScale = d3.scale.linear()
-                                    .domain([0, data.length])
+                                    .domain([0, 2000
+                                            ])
                                     .range([padding, width - padding]);
             var yScale = d3.scale.linear()
-                                    .domain([0, data.length])
+                                    .domain([0, 2000
+                                            ])
                                     .range([height - padding, padding]);
             
             // correlation => absolute value of the difference between the data we are comparing values
@@ -98,11 +100,13 @@
 					.data(data)
 					.enter()
 					.append("circle")
-					.attr("cx", function (d, i) {
-                        return  + padding + 5 ;
+					.attr("cx", function (d) {
+                        return d.starts + padding + 5 ;
+                        console.log(parseInt(d.starts));
                     })
-                    .attr("cy", function (d, i) {
-                        return height -  - padding - 5;
+                    .attr("cy", function (d) {
+                        return height - d.completions - padding - 5;
+                        console.log(d.completions);
                     })
                     .attr("r", 2)
 					.style("fill", function (d, i) {
@@ -111,8 +115,8 @@
                                 } else {
                                     return color(correlation[i]);   
                                 }
-                    })
-                    .on("mouseover", over)
+                    });
+/*                    .on("mouseover", over)
                     .on("mouseout", out);
                 
             // Over function, called on mouseover
@@ -147,7 +151,7 @@
                 // Hide the tooltip
                 d3.select("#tooltip").classed("hidden", true);
             }
-
+*/
             // Axis
             svg.append("g")
                 .attr("class", "axis") 
@@ -177,14 +181,6 @@
                 .attr("dy", ".71em")
                 .style("text-anchor", "end")
                 .text("started / completed building house 2012 - 2013");
-                
-            svg.append("line")
-                .attr('x1', padding)
-                .attr('y1', height - padding)
-                .attr('x2', width)
-                .attr('y2', "0")
-                .attr("stroke", "black") 
-                .attr("stroke-width", 1);
         });
     </script>
 </body>
