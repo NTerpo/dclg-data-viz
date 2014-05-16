@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>DLCG data visualisation</title>
+    
     <style>
         .axis path,
         .axis line {
@@ -41,15 +42,16 @@
             line-height: 20px;
         }
     </style>
+    
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="http://d3js.org/topojson.v1.min.js"></script>
+
 </head>
 
 <body>
     
     <div id="tooltip" class="hidden">
-        <p>
-        </p>
+        <p> </p>
     </div>
     
     <script>
@@ -58,7 +60,7 @@
         
         var padding = 30;
         
-        var limit = 200;
+        var limit = 0.8;
                
         var svg = d3.select("body")
                     .append("svg")
@@ -66,7 +68,10 @@
                     .attr("height", height);
         
         var color = d3.scale.quantize()
-							.range(["rgb(0,255,0)", "rgb(255,255,0)","rgb(255,128,0)", "rgb(255,0,0)"]);
+							.range(["rgb(0,255,0)", 
+                                    "rgb(255,255,0)",
+                                    "rgb(255,128,0)", 
+                                    "rgb(255,0,0)"]);
         
         // Color quantize scale
 		color.domain([0, limit]);
@@ -97,9 +102,10 @@
             var correlation = [];
             
             for (var i = 0; i < data.length; i++) {
-                correlation.push(Math.abs(data[i].completions - data[i].starts))
+                correlation.push(Math.abs(data[i].completions - data[i].starts));
             }
             
+            // Pass data to svg
 			svg.selectAll("circle")
 					.data(data)
 					.enter()
@@ -115,7 +121,7 @@
                                 if (correlation[i] == 0) {
                                     return "rgb(0,0,255)"
                                 } else {
-                                    return color(correlation[i]);   
+                                    return color(correlation[i] / (d3.min([d.starts, d.completions])));
                                 }
                     })
                     .on("mouseover", over)
@@ -125,20 +131,20 @@
             function over (d, i) {
                 d3.select(this)
                     .attr("stroke-width", 2)
-                    .attr("stroke", "black") ;
+                    .attr("stroke", "black");
                 
                 // Get this circle's x/y values, then augment for the tooltip
-                var xPosition = parseFloat(d3.select(this).attr("cx")) + padding ;
-                var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10 ;
+                var xPosition = parseFloat(d3.select(this).attr("cx")) + padding;
+                var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10;
 
                 // Update the tooltip position and value
                 d3.select("#tooltip")
                     .style("left", xPosition + "px")
                     .style("top", yPosition + "px")
-                    .html('<h1>' + d.authorityName + '</h1>' +
-                         '</br>' + 
-                        "Completed house building 2012 - 2013 : " + '<strong>' + d.completions + '</strong>' + '</br>' +
-                        "Started house building 2012 - 2013 : " + '<strong>' + d.starts + '</strong>' 
+                    .html('<h1>' + d.authorityName +
+                          '</h1>' + '</br>' + 
+                          "Completed house building 2012 - 2013 : " + '<strong>' + d.completions + '</strong>' + '</br>' +
+                          "Started house building 2012 - 2013 : " + '<strong>' + d.starts + '</strong>' 
                         );
 
                     // Show the tooltip
@@ -148,10 +154,11 @@
             // Out function, called on mouseout
             function out (d, i) {
                 d3.select(this)
-                    .attr("stroke", "none") ;
+                    .attr("stroke", "none");
                     
                 // Hide the tooltip
-                d3.select("#tooltip").classed("hidden", true);
+                d3.select("#tooltip")
+                    .classed("hidden", true);
             }
 
             // Axis
@@ -162,12 +169,12 @@
                 .scale(xScale)
                 .orient("bottom")
                 .ticks(5))
-                .append("text")
+               .append("text")
                 .attr("class", "label")
                 .attr("x", width - padding)
                 .attr("y", -6)
                 .style("text-anchor", "end")
-                .text("started building house 2012 - 2013");
+                .text("started building house 2012-2013");
             
             svg.append("g")
                 .attr("class", "axis") 
@@ -176,13 +183,13 @@
                 .scale(yScale)
                 .orient("left")
                 .ticks(5))
-                .append("text")
+               .append("text")
                 .attr("class", "label")
                 .attr("transform", "rotate(-90)")
                 .attr("y", 6)
                 .attr("dy", ".71em")
                 .style("text-anchor", "end")
-                .text("completed building house 2012 - 2013");
+                .text("completed building house 2012-2013");
         });
     </script>
 </body>

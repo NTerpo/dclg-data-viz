@@ -8,10 +8,11 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 * [Visualization_2](http://jsfiddle.net/nicolasterpolilli/J74am/embedded/result/)
 * [Visualization_3](http://jsfiddle.net/nicolasterpolilli/g6cKK/embedded/result/)
 * [Visualization_4](http://jsfiddle.net/nicolasterpolilli/j4ZS5/2/embedded/result/)
+* [Visualization_5](http://jsfiddle.net/nicolasterpolilli/Ran9A/embedded/result/)
 
 ### First step
 
-* SPARQL query to get data from 2 datasets :
+* SPARQL query to get data from 2 datasets via Open Data Communities API :
     * [Permanent dwellings started, 2009/10 to 2012/13, England, District By Tenure](http://opendatacommunities.org/data/house-building/starts/tenure)
     * [Permanent dwellings completed, 2009/10 to 2012/13, England, District By Tenure](http://opendatacommunities.org/data/house-building/completions/tenure)
 * d3.js for visualization
@@ -27,3 +28,4 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 * index2.html : X axis is 10 times the absolute value of the difference between values from both datasets
 * index3.html : X axis = 1st dataset, Y axis = 2nd dataset => each couple of points represent one local authority, the farest they are from the diagonal, the more different they are in both datasets, the radius is function of the value.
 * index4.html : same than index3.html but with just 1 circle per local authority
+* index5.html : X axis = 1st dataset's values, Y axis = 2nd dataset's values, circle = 1 local authority

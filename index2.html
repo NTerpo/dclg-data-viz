@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>DLCG data visualisation</title>
+    
     <style>
         .axis path,
         .axis line {
@@ -40,16 +41,17 @@
             font-size: 16px;
             line-height: 20px;
         }
+    
     </style>
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="http://d3js.org/topojson.v1.min.js"></script>
+
 </head>
 
 <body>
     
     <div id="tooltip" class="hidden">
-        <p>
-        </p>
+        <p> </p>
     </div>
     
     <script>
@@ -83,7 +85,7 @@
             var correlation = [];
             
             for (var i = 0; i < data.length; i++) {
-                correlation.push(Math.abs(data[i].completions - data[i].starts))
+                correlation.push(Math.abs(data[i].completions - data[i].starts));
             }
             
             // Scaling
@@ -128,10 +130,10 @@
             // Starts circles
             var startsCircles = gs.append("circle")
                 .attr("cx", function (d, i) {
-                    return 10 * correlation[i] + padding + 5 ;
+                    return 10 * correlation[i] + padding + 5;
                 })
                 .attr("cy", function (d) {
-                    return yScale(d.starts) ;
+                    return yScale(d.starts);
                 })
                 .attr("r", 5);
             
@@ -139,10 +141,10 @@
             // Completions circles
             var completionsCircles = gs.append("circle")
                 .attr("cx", function (d, i) {
-                    return 10 * correlation[i] + padding + 5 ;
+                    return 10 * correlation[i] + padding + 5;
                 })
                 .attr("cy", function (d) {
-                    return yScale(d.completions) ;
+                    return yScale(d.completions);
                 })
                 .attr("r", 5);
             
@@ -151,11 +153,11 @@
             function over (d, i) {
                 d3.select(this).selectAll("*")
                     .attr("stroke-width", 2)
-                    .attr("stroke", "black") ;
+                    .attr("stroke", "black");
                 
                 // Get this circle's x/y values, then augment for the tooltip
-                var xPosition = parseFloat(d3.select(this).selectAll("*").attr("cx")) + padding ;
-                var yPosition = parseFloat(d3.select(this).selectAll("*").attr("cy")) / 2 + height / 10 ;
+                var xPosition = parseFloat(d3.select(this).selectAll("*").attr("cx")) + padding;
+                var yPosition = parseFloat(d3.select(this).selectAll("*").attr("cy")) / 2 + height / 10;
 
                 // Update the tooltip position and value
                 d3.select("#tooltip")
@@ -174,7 +176,7 @@
             // Out function, called on mouseout
             function out (d, i) {
                 d3.select(this).selectAll("*")
-                    .attr("stroke", "none") ;
+                    .attr("stroke", "none");
                     
                 // Hide the tooltip
                 d3.select("#tooltip").classed("hidden", true);
@@ -188,7 +190,7 @@
                 .scale(xScale)
                 .orient("bottom")
                 .ticks(5))
-                .append("text")
+               .append("text")
                 .attr("class", "label")
                 .attr("x", width - padding)
                 .attr("y", -6)
@@ -202,7 +204,7 @@
                 .scale(yScale)
                 .orient("left")
                 .ticks(5))
-                .append("text")
+               .append("text")
                 .attr("class", "label")
                 .attr("transform", "rotate(-90)")
                 .attr("y", 6)
