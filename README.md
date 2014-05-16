@@ -8,7 +8,7 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 * [Visualization_2](http://jsfiddle.net/nicolasterpolilli/J74am/embedded/result/)
 * [Visualization_3](http://jsfiddle.net/nicolasterpolilli/g6cKK/embedded/result/)
 * [Visualization_4](http://jsfiddle.net/nicolasterpolilli/j4ZS5/2/embedded/result/)
-* [Visualization_5](http://jsfiddle.net/nicolasterpolilli/Ran9A/embedded/result/)
+* [Visualization_5](http://jsfiddle.net/nicolasterpolilli/Ran9A/2/embedded/result/)
 
 ### First step
 

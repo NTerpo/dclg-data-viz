@@ -21,7 +21,7 @@
             width: 300px;
             height: auto;
             padding: 10px;
-            background-color: linen;
+            background-color: snow;
             -webkit-border-radius: 10px;
             -moz-border-radius: 10px;
             border-radius: 10px;
@@ -58,7 +58,7 @@
         var width = 1000,
             height = 700;
         
-        var padding = 30;
+        var padding = 40;
         
         var limit = 200;
                
@@ -69,7 +69,7 @@
         
         var color = d3.scale.quantize()
 							.range(["rgb(0,255,0)", 
-                                    "rgb(255,255,0)",
+                                   // "rgb(255,255,0)",
                                     "rgb(255,128,0)", 
                                     "rgb(255,0,0)"]);
         
@@ -111,12 +111,20 @@
 					.enter()
 					.append("circle")
 					.attr("cx", function (d) {
-                        return xScale(d.starts);
+                        if (parseInt(d.starts) === 0) {
+                            return xScale(5);
+                        } else {
+                            return xScale(d.starts);
+                        }
                     })
                     .attr("cy", function (d) {
+                        if (parseInt(d.completions) === 0) {
+                            return yScale(5);
+                        } else {
                         return yScale(d.completions);
+                        }
                     })
-                    .attr("r", 2)
+                    .attr("r", 3)
 					.style("fill", function (d, i) {
                                 if (correlation[i] == 0) {
                                     return "rgb(0,0,255)"
@@ -130,7 +138,7 @@
             // Over function, called on mouseover
             function over (d, i) {
                 d3.select(this)
-                    .attr("stroke-width", 2)
+                    .attr("stroke-width", 1.5)
                     .attr("stroke", "black");
                 
                 // Get this circle's x/y values, then augment for the tooltip
@@ -174,7 +182,7 @@
                 .call(d3.svg.axis()
                 .scale(xScale)
                 .orient("bottom")
-                .ticks(5))
+                .ticks(2))
                .append("text")
                 .attr("class", "label")
                 .attr("x", width - padding)
@@ -188,7 +196,7 @@
                 .call(d3.svg.axis()
                 .scale(yScale)
                 .orient("left")
-                .ticks(5))
+                .ticks(2))
                .append("text")
                 .attr("class", "label")
                 .attr("transform", "rotate(-90)")
@@ -218,9 +226,9 @@
                 .style("text-anchor", "end")
                 .text(function(d, i) { 
                     if (i === 0) {
-                        return "> " + d + " difference between both datasets";
+                        return "less differences between both datasets";
                     } else {
-                        return "> " + 150 + " differences between both datasets";
+                        return "more differences between both datasets";
                     }
                 });
         });
