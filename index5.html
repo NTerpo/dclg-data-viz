@@ -99,14 +99,12 @@
 					.enter()
 					.append("circle")
 					.attr("cx", function (d, i) {
-                        return (i * (width / data.length)) + padding + 5 ;
+                        return  + padding + 5 ;
                     })
                     .attr("cy", function (d, i) {
-                        return height - (i * (width / data.length)) - padding - 5 - 2 * Math.sqrt(correlation[i]);
+                        return height -  - padding - 5;
                     })
-                    .attr("r", function (d) {
-                        return Math.sqrt(d.starts)/10;
-                    })
+                    .attr("r", 2)
 					.style("fill", function (d, i) {
                                 if (correlation[i] == 0) {
                                     return "rgb(0,0,255)"
@@ -163,7 +161,7 @@
                 .attr("x", width - padding)
                 .attr("y", -6)
                 .style("text-anchor", "end")
-                .text("completed building house 2012 - 2013");
+                .text("Local authority");
             
             svg.append("g")
                 .attr("class", "axis") 
@@ -178,7 +176,7 @@
                 .attr("y", 6)
                 .attr("dy", ".71em")
                 .style("text-anchor", "end")
-                .text("started building house 2012 - 2013");
+                .text("started / completed building house 2012 - 2013");
                 
             svg.append("line")
                 .attr('x1', padding)
