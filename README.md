@@ -4,8 +4,9 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 
 ## Demo
 
-* [Visualization_5](http://jsfiddle.net/nicolasterpolilli/Ran9A/3/embedded/result/)
+* [Visualization_5](http://jsfiddle.net/nicolasterpolilli/Ran9A/4/embedded/result/)
 
+X axis = Permanent dwellings started, 2009/10 to 2012/13, Y axis = Permanent dwellings completed, circle = 1 local authority, radius = Numbers of households accommodated by local authorities per 1000 households 2012-Q1
 ## Drafts
 
 * [Visualization_1](http://jsfiddle.net/nicolasterpolilli/x6HJq/embedded/result/)
@@ -18,8 +19,8 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 * SPARQL query to get data from 2 datasets via Open Data Communities API :
     * [Permanent dwellings started, 2009/10 to 2012/13, England, District By Tenure](http://opendatacommunities.org/data/house-building/starts/tenure)
     * [Permanent dwellings completed, 2009/10 to 2012/13, England, District By Tenure](http://opendatacommunities.org/data/house-building/completions/tenure)
+    * [Households in temporary accommodation per 1000 households, 2011 Q2 to 2013 Q4, England, District](http://opendatacommunities.org/data/homelessness/households-accommodated-per-1000/temporary-housing-types)
 * d3.js for visualization
-* When you hover each circles you get the name of the local authority and both values
 
 ### Next step
 
@@ -31,4 +32,3 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 * index2.html : X axis is 10 times the absolute value of the difference between values from both datasets
 * index3.html : X axis = 1st dataset, Y axis = 2nd dataset => each couple of points represent one local authority, the farest they are from the diagonal, the more different they are in both datasets, the radius is function of the value.
 * index4.html : same than index3.html but with just 1 circle per local authority
-* index5.html : X axis = 1st dataset's values, Y axis = 2nd dataset's values, circle = 1 local authority
