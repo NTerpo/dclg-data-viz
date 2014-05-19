@@ -4,9 +4,11 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 
 ## Demo
 
-* [Visualization_5](http://jsfiddle.net/nicolasterpolilli/Ran9A/4/embedded/result/)
+[Visualization_5](http://jsfiddle.net/nicolasterpolilli/Ran9A/4/embedded/result/)
 
-X axis = Permanent dwellings started, 2009/10 to 2012/13, Y axis = Permanent dwellings completed, circle = 1 local authority, radius = Numbers of households accommodated by local authorities per 1000 households 2012-Q1
+* X axis = Permanent dwellings started, 2009/10 to 2012/13 
+* Y axis = Permanent dwellings completed, circle = 1 local authority
+* Radius = Numbers of households accommodated by local authorities per 1000 households 2012-Q1
 ## Drafts
 
 * [Visualization_1](http://jsfiddle.net/nicolasterpolilli/x6HJq/embedded/result/)
