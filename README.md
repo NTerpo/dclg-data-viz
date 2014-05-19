@@ -24,9 +24,9 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
     * [Households in temporary accommodation per 1000 households, 2011 Q2 to 2013 Q4, England, District](http://opendatacommunities.org/data/homelessness/households-accommodated-per-1000/temporary-housing-types)
 * d3.js for visualization
 
-### Next step
+### Doing
 
-* NOMIS API
+* NOMIS API 
 
 ### Other viz
 

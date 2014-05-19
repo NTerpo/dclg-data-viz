@@ -91,6 +91,16 @@
         // Loading data     
         d3.csv(datasource, function (data) {
             
+            // Merge dataset with NOMIS dataset of "...." using NOMIS REST API
+            var nomisData = [];
+            var http = new XMLHttpRequest();
+            for (var i = 0; i < data.length; i++) {
+                nomisData[i] = http.open("GET", "https://www.nomisweb.co.uk/api/v01/dataset/NM_1_1/sex.def.sdmx.json?geography="+ data[i].gssCode + "blablabla");
+                data[i].nomis = nomisData[i];
+                console.log(data[i]);
+            }
+            
+            
             // Scaling
             var xScale = d3.scale.log()
                                     .domain([10, d3.max(data, function (d) {
