@@ -37,5 +37,5 @@ SELECT ?refArea ?observation ?gssCode ?authorityName ?completions ?starts ?obser
       ?authority rdfs:label ?authorityName .
    }
 
-} ORDER BY(?authorityName)
+} ORDER BY(?starts)
 
