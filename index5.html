@@ -158,9 +158,15 @@
                 }
 
                 // Color - jobs density data
-                var color = ["rgb(255,0,0)", "rgb(255,128,0)", "rgb(0,255,0)"];
-                var jobThreshold = [0.5, 0.8, 100]
+                var color = d3.scale.quantize()
+                                    .range([
+                                        "rgb(255,0,0)", 
+                                        "rgb(255,128,0)",
+                                        "rgb(0,255,0)"
+                                    ]);
                 
+                color.domain([0.3, 1])
+                                
                 // Pass data to svg
                 svg.selectAll("circle")
 				        .data(data)
@@ -184,13 +190,8 @@
                             return (1 + 1.5 * Math.sqrt(d.homelessness));
                         })
 					    .style("fill", function (d) {
-                            for (var i = 0; i < jobThreshold.length; i++) {
-                                if (d.job < jobThreshold[i]) {
-                                    return color[i];
-                                    break;
-                                } 
-                            }
-                        })
+					        return color(d.job);
+					    })
                         .on("mouseover", over)
                         .on("mouseout", out);
                
@@ -297,34 +298,28 @@
 
                 // Legend circles 
                 var legend = svg.selectAll(".legend")
-                    .data(jobThreshold)
+                    .data(color.range())
                     .enter().append("g")
                     .attr("class", "legend")
                     .attr("transform", function(d, i) { 
-                        return "translate(0," + i * 20 + ")"; 
+                        return "translate(" + (- i) * 40 +" ,0)"; 
                     });
 
                 legend.append("rect")
-                    .attr("x", width - 58)
-                    .attr("y", height - padding - 110)
-                    .attr("width", 18)
-                    .attr("height", 18)
+                    .attr("x", width - 76)
+                    .attr("y", height - padding - 70)
+                    .attr("width", 35)
+                    .attr("height", 10)
                     .style("fill", function (d, i) {
                         return color[i];
                     });
 
                 legend.append("text")
                     .attr("x", width - 60)
-                    .attr("y", height - padding - 102)
+                    .attr("y", height - padding - 80)
                     .attr("dy", ".35em")
                     .style("text-anchor", "end")
-                    .text(function(d, i) { 
-                        if (i === (color.length - 1)) {
-                            return "Jobs density > " + jobThreshold[i-1];
-                        } else {
-                            return "Jobs density < " + jobThreshold[i];
-                        }
-                    });
+                    .text("legend colors"); 
             })
         });
     </script>
