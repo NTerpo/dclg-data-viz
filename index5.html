@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>DLCG data visualisation</title>
-    
+
     <style>
         .axis path,
         .axis line {
@@ -49,42 +49,36 @@
             line-height: 20px;
         }
     </style>
-    
+
     <script src="http://d3js.org/d3.v3.min.js"></script>
     <script src="http://d3js.org/topojson.v1.min.js"></script>
 
 </head>
 
 <body>
-    
+
     <div id="tooltip" class="hidden">
         <p> </p>
     </div>
-    
+
     <script>
         var width = 1000,
             height = 700;
-        
+
         var padding = 40;
-                       
+
         var svg = d3.select("body")
                     .append("svg")
                     .attr("width", width)
                     .attr("height", height);
-        
-        var color = d3.scale.quantize()
-							.range(["rgb(0,255,0)", 
-                                    "rgb(255,255,0)",
-                                    "rgb(255,128,0)", 
-                                    "rgb(255,0,0)"]);
-                
+
         // SPARQL query to get data from two sources in a .CSV + NOMIS API
         var datasource = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0APREFIX+homelessness%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhomelessness%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3Fstarts+%3Fcompletions+%3Fhomelessness+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fcompletions%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++compl%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A+++++++++++++++++++building%3AcompletionsObs+%3Fcompletions+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fstarts%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A++++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A++++++++++++++++++++starts%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A++++++++++++++++++++building%3AstartsObs+%3Fstarts+.%0D%0A+++%7D%0D%0A%0D%0A++++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhomelessness%2Fhouseholds-accommodated-per-1000%2Ftemporary-housing-types%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+quarter%3A2012-Q1+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++homelessness%3AhouseholdsAccommodatedPer1000Obs+%3Fhomelessness+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fstarts%29"
         var nomisData = "http://www.nomisweb.co.uk/api/v01/dataset/NM_57_1.data.csv?geography=1946157057...1946157382&date=latest&item=3&measures=20100&select=date_name,geography_name,geography_code,item_name,measures_name,obs_value,obs_status_name"
-        
+
         // Loading data     
         d3.csv(datasource, function (data) {
-            
+
             // Scaling
             var xScale = d3.scale.log()
                                     .domain([10, d3.max(data, function (d) {
@@ -98,14 +92,14 @@
                                                 })
                                             ])
                                     .range([height - padding, padding]);
-            
+
             // correlation 
             var correlation = [];     
             for (var i = 0; i < data.length; i++) {
                 correlation.push(Math.abs(data[i].completions - data[i].starts));
             } 
-            
-            // Acceptable values domain                
+
+            // Acceptable values domain
             svg.append("path")
                 .datum(data)
                 .attr("class", "area")
@@ -132,170 +126,193 @@
                         }
                     })); 
 
-            // Merge dataset with NOMIS dataset of "...." using NOMIS REST API
+            // Merge dataset with NOMIS dataset
             d3.csv(nomisData, function (nomis) {
                 for (var i = 0; i < data.length; i++) {
                     // Grab GSS code from ODC dataset
                     var dataGss = data[i].gssCode;
-                    
+
                     for (var j = 0; j < nomis.length; j++) {
-                        
+
                         var nomisGss = nomis[j].GEOGRAPHY_CODE;
-                        
+
                         if (dataGss == nomisGss) {
-                            
+
                             // Copy job density value into the ODC csv
                             data[i].job = nomis[j].OBS_VALUE;
                             break;
                         } 
                     }
                 }
-            
-                // Color quantize scale <--
-        		color.domain([0,4]);
-            
-            // Pass data to svg
-			svg.selectAll("circle")
-					.data(data)
-					.enter()
-					.append("circle")
-					.attr("cx", function (d) {
-                        if (parseInt(d.starts) === 0) {
-                            return xScale(5);
-                        } else {
-                            return xScale(d.starts);
-                        }
-                    })
-                    .attr("cy", function (d) {
-                        if (parseInt(d.completions) === 0) {
-                            return yScale(5);
-                        } else {
-                        return yScale(d.completions);
-                        }
-                    })
-                    .attr("r", function (d) {
-                        return (1 + 1.5 * Math.sqrt(d.homelessness));
-                    })
-					.style("fill", function (d) {
-                        return color(3.5 - d.job);
-                    })
-                    .on("mouseover", over)
-                    .on("mouseout", out);
-                
-            // Over function, called on mouseover
-            function over (d, i) {
-                d3.select(this)
-                    .attr("stroke-width", 1.5)
-                    .attr("stroke", "black");
-                
-                // Get this circle's x/y values, then augment for the tooltip
-                var xPosition = 0;
-                if (parseFloat(d3.select(this).attr("cx")) < ((4 * width) / 5)) {
-                                    xPosition = parseFloat(d3.select(this).attr("cx")) + 20;
-                                } else {
-                                    xPosition = parseFloat(d3.select(this).attr("cx")) - 20 - 300;
-                                }
 
-                var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10;
+                // Color - jobs density data
+                var color = ["rgb(255,0,0)", "rgb(255,128,0)", "rgb(0,255,0)"];
+                var jobThreshold = [0.5, 0.8, 100]
+                
+                // Pass data to svg
+                svg.selectAll("circle")
+				        .data(data)
+					    .enter()
+					    .append("circle")
+					    .attr("cx", function (d) {
+                            if (parseInt(d.starts) === 0) {
+                                return xScale(5);
+                            } else {
+                                return xScale(d.starts);
+                            }
+                        })
+                        .attr("cy", function (d) {
+                            if (parseInt(d.completions) === 0) {
+                                return yScale(5);
+                            } else {
+                                return yScale(d.completions);
+                            }
+                        })
+                        .attr("r", function (d) {
+                            return (1 + 1.5 * Math.sqrt(d.homelessness));
+                        })
+					    .style("fill", function (d) {
+                            for (var i = 0; i < jobThreshold.length; i++) {
+                                if (d.job < jobThreshold[i]) {
+                                    return color[i];
+                                    break;
+                                } 
+                            }
+                        })
+                        .on("mouseover", over)
+                        .on("mouseout", out);
+               
+                // Over function, called on mouseover
+                function over (d, i) {
+                    d3.select(this)
+                        .attr("stroke-width", 1.5)
+                        .attr("stroke", "black");
+                
+                    // Get this circle's x/y values, then augment for the tooltip
+                    var xPosition = 0;
+                    if (parseFloat(d3.select(this).attr("cx")) < ((4 * width) / 5)) {
+                        xPosition = parseFloat(d3.select(this).attr("cx")) + 20;
+                    } else {
+                        xPosition = parseFloat(d3.select(this).attr("cx")) - 20 - 300;
+                    }
 
-                // Update the tooltip position and value
-                d3.select("#tooltip")
-                    .style("left", xPosition + "px")
-                    .style("top", yPosition + "px")
-                    .html('<h1>' + d.authorityName +
-                          '</h1>' + '</br>' + 
-                          "Completed house building 2012 - 2013 : " + '<strong>' + d.completions + '</strong>' + '</br>' +
-                          "Started house building 2012 - 2013 : " + '<strong>' + d.starts + '</strong>' + '</br>' + '</br>' +
-                          "Numbers of households accommodated by local authorities per 1000 households 2012-Q1 : " + '<strong>' + d.homelessness + '</strong>' + '</br>' + '</br>' +
-                          "Job density : " + '<strong>' + d.job + '</strong>'
-                        );
+                    var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10;
+
+                    // Update the tooltip position and value
+                    d3.select("#tooltip")
+                        .style("left", xPosition + "px")
+                        .style("top", yPosition + "px")
+                        .html('<h1>' + d.authorityName +
+                            '</h1>' + '</br>' + 
+                            "Completed house building 2012 - 2013 : " + '<strong>' + d.completions + '</strong>' + '</br>' +
+                            "Started house building 2012 - 2013 : " + '<strong>' + d.starts + '</strong>' + 
+                            '</br>' + '</br>' +
+                            "Numbers of households accommodated by local authorities per 1000 households 2012-Q1 : " + '<strong>' + d.homelessness + '</strong>' + 
+                            '</br>' + '</br>' +
+                            "Job density : " + '<strong>' + d.job + '</strong>');
 
                     // Show the tooltip
                     d3.select("#tooltip").classed("hidden", false);
-            }
-            
-            // Out function, called on mouseout
-            function out (d, i) {
-                d3.select(this)
-                    .attr("stroke", "none");
-                    
-                // Hide the tooltip
-                d3.select("#tooltip")
-                    .classed("hidden", true);
-            }
+                }
 
-            // Axis
-            svg.append("g")
-                .attr("class", "axis") 
-                .attr("transform", "translate(0," + (height - padding) + ")")     
-                .call(d3.svg.axis()
-                .scale(xScale)
-                .orient("bottom")
-                .ticks(2))
-               .append("text")
-                .attr("class", "label")
-                .attr("x", width - padding)
-                .attr("y", -6)
-                .style("text-anchor", "end")
-                .text("started building house 2012-2013");
-            
-            svg.append("g")
-                .attr("class", "axis") 
-                .attr("transform", "translate(" + padding + ",0)")
-                .call(d3.svg.axis()
-                .scale(yScale)
-                .orient("left")
-                .ticks(2))
-               .append("text")
-                .attr("class", "label")
-                .attr("transform", "rotate(-90)")
-                .attr("y", 6)
-                .attr("dy", ".71em")
-                .style("text-anchor", "end")
-                .text("completed building house 2012-2013");
+                // Out function, called on mouseout
+                function out (d, i) {
+                    d3.select(this)
+                        .attr("stroke", "none");
+
+                    // Hide the tooltip
+                    d3.select("#tooltip")
+                        .classed("hidden", true);
+                }
+
+
+                // Axis and legends 
                 
-          // Legend circles 
-            var legend = svg.selectAll(".legend")
-                .data(color.domain())
-                .enter().append("g")
-                .attr("class", "legend")
-                .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+                // Axis
+                svg.append("g")
+                    .attr("class", "axis") 
+                    .attr("transform", "translate(0," + (height - padding) + ")")     
+                    .call(d3.svg.axis()
+                    .scale(xScale)
+                    .orient("bottom")
+                    .ticks(2))
+                   .append("text")
+                    .attr("class", "label")
+                    .attr("x", width - padding)
+                    .attr("y", -6)
+                    .style("text-anchor", "end")
+                    .text("started building house 2012-2013");
 
-            legend.append("rect")
-                .attr("x", width - 58)
-                .attr("y", height - padding - 100)
-                .attr("width", 18)
-                .attr("height", 18)
-                .style("fill", color);
+                svg.append("g")
+                    .attr("class", "axis") 
+                    .attr("transform", "translate(" + padding + ",0)")
+                    .call(d3.svg.axis()
+                    .scale(yScale)
+                    .orient("left")
+                    .ticks(2))
+                   .append("text")
+                    .attr("class", "label")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 6)
+                    .attr("dy", ".71em")
+                    .style("text-anchor", "end")
+                    .text("completed building house 2012-2013");
 
-            legend.append("text")
-                .attr("x", width - 60)
-                .attr("y", height - padding - 92)
-                .attr("dy", ".35em")
-                .style("text-anchor", "end")
-                .text(function(d, i) { 
-                    if (i === 0) {
-                        return "highest job density";
-                    } else {
-                        return "lowest job density";
-                    }
-                });
+                // Legend area
+                svg.append("rect")
+                    .attr("x", width - 58)
+                    .attr("y", height - padding - 48)
+                    .attr("width", 18)
+                    .attr("height", 18)
+                    .style("fill", "lightgray");
 
-            // Legend area
-            svg.append("rect")
-                .attr("x", width - 58)
-                .attr("y", height - padding - 58)
-                .attr("width", 18)
-                .attr("height", 18)
-                .style("fill", "lightgray");
-               
-            svg.append("text")
-                .attr("class", "label")
-                .attr("x", width - 60)
-                .attr("y", height - padding - 50)
-                .attr("dy", ".35em")
-                .style("text-anchor", "end")
-                .text("completed = +/- 30% started");
+                svg.append("text")
+                    .attr("class", "label")
+                    .attr("x", width - 60)
+                    .attr("y", height - padding - 40)
+                    .attr("dy", ".35em")
+                    .style("text-anchor", "end")
+                    .text("completed = +/- 30% started");
+                    
+                // Legend jobs density
+                svg.append("text")
+                    .attr("class", "label")
+                    .attr("x", width - 40)
+                    .attr("y", height - padding - 25)
+                    .attr("dy", ".35em")
+                    .style("text-anchor", "end")
+                    .text("Jobs density = number of jobs divided by number of people in a given area");
+
+                // Legend circles 
+                var legend = svg.selectAll(".legend")
+                    .data(jobThreshold)
+                    .enter().append("g")
+                    .attr("class", "legend")
+                    .attr("transform", function(d, i) { 
+                        return "translate(0," + i * 20 + ")"; 
+                    });
+
+                legend.append("rect")
+                    .attr("x", width - 58)
+                    .attr("y", height - padding - 110)
+                    .attr("width", 18)
+                    .attr("height", 18)
+                    .style("fill", function (d, i) {
+                        return color[i];
+                    });
+
+                legend.append("text")
+                    .attr("x", width - 60)
+                    .attr("y", height - padding - 102)
+                    .attr("dy", ".35em")
+                    .style("text-anchor", "end")
+                    .text(function(d, i) { 
+                        if (i === (color.length - 1)) {
+                            return "Jobs density > " + jobThreshold[i-1];
+                        } else {
+                            return "Jobs density < " + jobThreshold[i];
+                        }
+                    });
             })
         });
     </script>
