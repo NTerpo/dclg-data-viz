@@ -165,31 +165,31 @@
    
                 // Pass data to svg
                 svg.selectAll("circle")
-				        .data(data)
-					    .enter()
-					    .append("circle")
-					    .attr("cx", function (d) {
-                            if (parseInt(d.starts) === 0) {
-                                return xScale(5);
-                            } else {
-                                return xScale(d.starts);
-                            }
-                        })
-                        .attr("cy", function (d) {
-                            if (parseInt(d.completions) === 0) {
-                                return yScale(5);
-                            } else {
-                                return yScale(d.completions);
-                            }
-                        })
-                        .attr("r", function (d) {
-                            return (2 +  Math.sqrt(d.homelessness));
-                        })
-					    .style("fill", function (d) {
-					        return color(d.job);
-					    })
-                        .on("mouseover", over)
-                        .on("mouseout", out);
+                    .data(data)
+                    .enter()
+                    .append("circle")
+                    .attr("cx", function (d) {
+                        if (parseInt(d.starts) === 0) {
+                            return xScale(5);
+                        } else {
+                            return xScale(d.starts);
+                        }
+                    })
+                    .attr("cy", function (d) {
+                        if (parseInt(d.completions) === 0) {
+                            return yScale(5);
+                        } else {
+                            return yScale(d.completions);
+                        }
+                    })
+                    .attr("r", function (d) {
+                        return (2 +  Math.sqrt(d.homelessness));
+                    })
+				    .style("fill", function (d) {
+				        return color(d.job);
+				    })
+                    .on("mouseover", over)
+                    .on("mouseout", out);
                
                 // Over function, called on mouseover
                 function over (d, i) {
@@ -221,8 +221,8 @@
                             "Numbers of households accommodated by local authorities per 1000 households 2012-Q1 : " + 
                                 '<a href = "' + d.observation3 + '" target="_blank">' + d.homelessness + '</a>' + 
                             '</br>' + '</br>' +  
-                            '<a href = "http://www.nomisweb.co.uk/articles/649.aspx" target="_blank">' + "Jobs density" + '</a>' + 
-                                " : " + d.job 
+                                '<a href = "http://www.nomisweb.co.uk/articles/649.aspx" target="_blank">' + "Jobs density" + '</a>' + 
+                            " : " + d.job 
                         );
 
                     // Show the tooltip
@@ -234,6 +234,8 @@
                     d3.select(this)
                         .attr("stroke", "none");
                 }
+                
+                
                 
                 // Axis and legends 
                 
