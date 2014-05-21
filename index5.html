@@ -17,7 +17,7 @@
             font-size: 11px;
         }
         .area {
-            fill: lightgray;
+            fill: rgb(245,245,245);
         }
         .label {
             font-family: sans-serif;
@@ -28,7 +28,8 @@
             width: 300px;
             height: auto;
             padding: 10px;
-            background-color: Gainsboro;
+            background-color: rgb(245,245,245);
+            opacity: 0.8;
             -webkit-border-radius: 10px;
             -moz-border-radius: 10px;
             border-radius: 10px;
@@ -43,7 +44,7 @@
 
         #tooltip p {
             margin: 0;
-            font-family: sans-serif;
+            font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
             font-size: 16px;
             line-height: 20px;
         }
@@ -158,15 +159,10 @@
                 }
 
                 // Color - jobs density data
-                var color = d3.scale.quantize()
-                                    .range([
-                                        "rgb(255,0,0)", 
-                                        "rgb(255,128,0)",
-                                        "rgb(0,255,0)"
-                                    ]);
-                
-                color.domain([0.3, 1])
-                                
+                var color = d3.scale.log()
+                                    .domain([0.3, 1])
+                                    .range(['rgb(240,59,32)','rgb(254,178,76)','rgb(255,237,160)']);
+   
                 // Pass data to svg
                 svg.selectAll("circle")
 				        .data(data)
@@ -187,7 +183,7 @@
                             }
                         })
                         .attr("r", function (d) {
-                            return (1 + 1.5 * Math.sqrt(d.homelessness));
+                            return (2 +  Math.sqrt(d.homelessness));
                         })
 					    .style("fill", function (d) {
 					        return color(d.job);
@@ -225,8 +221,8 @@
                             "Numbers of households accommodated by local authorities per 1000 households 2012-Q1 : " + 
                                 '<a href = "' + d.observation3 + '" target="_blank">' + d.homelessness + '</a>' + 
                             '</br>' + '</br>' +  
-                            "Job density : " + 
-                                '<a href = "http://www.nomisweb.co.uk/articles/649.aspx" target="_blank">' + d.job + '</a>'
+                            '<a href = "http://www.nomisweb.co.uk/articles/649.aspx" target="_blank">' + "Jobs density" + '</a>' + 
+                                " : " + d.job 
                         );
 
                     // Show the tooltip
@@ -274,52 +270,61 @@
                 // Legend area
                 svg.append("rect")
                     .attr("x", width - 58)
-                    .attr("y", height - padding - 48)
+                    .attr("y", height - padding - 43)
                     .attr("width", 18)
                     .attr("height", 18)
-                    .style("fill", "lightgray");
+                        
+                    .style("fill", "rgb(235,235,235)");
 
                 svg.append("text")
                     .attr("class", "label")
                     .attr("x", width - 60)
-                    .attr("y", height - padding - 40)
+                    .attr("y", height - padding - 35)
                     .attr("dy", ".35em")
                     .style("text-anchor", "end")
                     .text("completed = +/- 30% started");
                     
-                // Legend jobs density
-                svg.append("text")
-                    .attr("class", "label")
-                    .attr("x", width - 40)
-                    .attr("y", height - padding - 25)
-                    .attr("dy", ".35em")
-                    .style("text-anchor", "end")
-                    .text("Jobs density = number of jobs divided by number of people in a given area");
-
                 // Legend circles 
                 var legend = svg.selectAll(".legend")
                     .data(color.range())
                     .enter().append("g")
                     .attr("class", "legend")
                     .attr("transform", function(d, i) { 
-                        return "translate(" + (- i) * 40 +" ,0)"; 
+                        return "translate(" +  i * 40 +" ,0)"; 
                     });
 
                 legend.append("rect")
-                    .attr("x", width - 76)
-                    .attr("y", height - padding - 70)
+                    .attr("x", width - 155)
+                    .attr("y", height - padding - 80)
                     .attr("width", 35)
                     .attr("height", 10)
                     .style("fill", function (d, i) {
-                        return color[i];
+                        return d;
                     });
-
-                legend.append("text")
-                    .attr("x", width - 60)
-                    .attr("y", height - padding - 80)
+                
+                svg.append("text")
+                    .attr("class", "label")
+                    .attr("x", width - 40)
+                    .attr("y", height - padding - 60)
                     .attr("dy", ".35em")
                     .style("text-anchor", "end")
-                    .text("legend colors"); 
+                    .text("> 2");
+                
+                svg.append("text")
+                    .attr("class", "label")
+                    .attr("x", width - 130)
+                    .attr("y", height - padding - 60)
+                    .attr("dy", ".35em")
+                    .style("text-anchor", "end")
+                    .text("0.3 <");
+                
+                svg.append("text")
+                    .attr("class", "label")
+                    .attr("x", width - 70)
+                    .attr("y", height - padding - 90)
+                    .attr("dy", ".35em")
+                    .style("text-anchor", "end")
+                    .html("Jobs density");  
             })
         });
     </script>
