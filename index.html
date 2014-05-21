@@ -106,12 +106,6 @@
                                             ])
                                     .range([height - padding, padding]);
 
-            // correlation 
-            var correlation = [];     
-            for (var i = 0; i < data.length; i++) {
-                correlation.push(Math.abs(data[i].completions - data[i].starts));
-            } 
-
             // Acceptable values domain
             svg.append("path")
                 .datum(data)
