@@ -17,7 +17,7 @@
             font-size: 11px;
         }
         .area {
-            fill: rgb(245,245,245);
+            fill: rgb(222,235,247);
         }
         .label {
             font-family: sans-serif;
@@ -238,13 +238,17 @@
                 // Axis and legends 
                 
                 // Axis
+                var formatSi = d3.format(".4");
+                
                 svg.append("g")
                     .attr("class", "axis") 
                     .attr("transform", "translate(0," + (height - padding) + ")")     
                     .call(d3.svg.axis()
                     .scale(xScale)
                     .orient("bottom")
-                    .ticks(2))
+                    .ticks(5, function(d, i) {
+                        return formatSi(d);
+                    }))
                    .append("text")
                     .attr("class", "label")
                     .attr("x", width - padding)
@@ -258,7 +262,9 @@
                     .call(d3.svg.axis()
                     .scale(yScale)
                     .orient("left")
-                    .ticks(2))
+                    .ticks(5, function(d, i) {
+                        return formatSi(d);
+                    }))
                    .append("text")
                     .attr("class", "label")
                     .attr("transform", "rotate(-90)")
@@ -274,7 +280,7 @@
                     .attr("width", 18)
                     .attr("height", 18)
                         
-                    .style("fill", "rgb(235,235,235)");
+                    .style("fill", "rgb(222,235,247)");
 
                 svg.append("text")
                     .attr("class", "label")
@@ -312,7 +318,7 @@
                 
                 svg.append("text")
                     .attr("class", "label")
-                    .attr("x", width - 130)
+                    .attr("x", width - 135)
                     .attr("y", height - padding - 60)
                     .attr("dy", ".35em")
                     .style("text-anchor", "end")
