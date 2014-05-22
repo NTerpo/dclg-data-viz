@@ -255,7 +255,7 @@
                     .attr("x", width - padding)
                     .attr("y", -6)
                     .style("text-anchor", "end")
-                    .text("started building house 2012-2013");
+                    .text("started building house");
 
                 svg.append("g")
                     .attr("class", "axis") 
@@ -272,7 +272,7 @@
                     .attr("y", 6)
                     .attr("dy", ".71em")
                     .style("text-anchor", "end")
-                    .text("completed building house 2012-2013");
+                    .text("completed building house");
 
                 // Legend area
                 svg.append("rect")
@@ -394,12 +394,12 @@
                         // Pass data to svg
                         svg.selectAll("circle")
                             .data(data)
-                            .transition()
-                            .duration(1000)
+                            .transition()                     
+                            .duration(2000)
                             .each("start", function() {
                                 d3.select(this)
                                 .style("fill", "rgb(254,178,76)")
-                                .attr("r", 4);
+                                .attr("r", 5);
                             })
                             .attr("cx", function (d) {
                                 if (parseInt(d.starts) === 0) {
@@ -416,9 +416,8 @@
                                }
                            })
      					   .transition()
-     					   .duration(1000)
-                            
-                            .attr("r", function (d) {
+     					   .duration(400)
+                           .attr("r", function (d) {
                                 return (2 +  Math.sqrt(d.homelessness));
                             })
         				    .style("fill", function (d) {
