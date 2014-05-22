@@ -23,6 +23,17 @@
             font-family: sans-serif;
             font-size: 10px;
         }
+        #change_period {
+            width: auto;
+            height: auto;
+            padding: 10px;
+            background-color: rgb(49,130,189);
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+            text-align: center;
+
+        }
         #tooltip {
             position: absolute;
             width: 300px;
@@ -61,7 +72,9 @@
 </head>
 
 <body>
-    <p>Change period (2011-2012 / 2012_2011)</p>
+    <div id="buttons">
+            <button id="change_period">2011-12 / 2012-13</button>
+    </div>
     
     <div id="tooltip" class="hidden">
         <p> </p>
@@ -212,12 +225,13 @@
                         .style("top", yPosition + "px")
                         .html('<h1>' + '<a href = "' + d.refArea + '" target="_blank">' + d.authorityName + '</a>' + 
                             '</h1>' + '</br>' + 
-                            "Completed house building 2012 - 2013 : " + 
+                            "Completed house building " + (d.observation).split("/")[7] + " : " + 
                                 '<a href = "' + d.observation + '" target="_blank">' + d.completions + '</a>' + '</br>' + '</br>' +
-                            "Started house building 2012 - 2013 : " + 
+                            "Started house building " + (d.observation).split("/")[7] + " : " +  
                                 '<a href = "' + d.observation2 + '" target="_blank">' + d.starts + '</a>' + 
                             '</br>' + '</br>' +
-                            "Numbers of households accommodated by local authorities per 1000 households 2012-Q1 : " + 
+                            "Numbers of households accommodated by local authorities per 1000 households " 
+                            + (d.observation3).split("/")[7] + " : " + 
                                 '<a href = "' + d.observation3 + '" target="_blank">' + d.homelessness + '</a>' + 
                             '</br>' + '</br>' +  
                                 '<a href = "http://www.nomisweb.co.uk/articles/649.aspx" target="_blank">' + "Jobs density" + '</a>' + 
@@ -338,18 +352,19 @@
         
         
         /**
-        ** On Click **
+        
+        ** When clicking on the button you change the period of time of the dataset **
+        
         **/
         
-        d3.select("p")
-			.on("click", function() {
+        d3.select("#change_period")
+			.on("click", function() { 
                 
                 if (ds === 0) {
                     ds = 1;
                 } else {
                     ds = 0;
                 }
-
                 
                 d3.csv(datasource[ds], function (data) {
 
@@ -385,22 +400,17 @@
                                                             })
                                                         ])
                                                 .range([height - padding, padding]);
-                        
-                        // Color - jobs density data
-                        var color = d3.scale.log()
-                                            .domain([0.3, 1])
-                                            .range(['rgb(240,59,32)','rgb(254,178,76)','rgb(255,237,160)']);
-   
+                    
+
+                        // Key function to bind data to element via gsscode
+                        var key = function(d) {
+                            return d.gssCode;
+                        };
                         // Pass data to svg
                         svg.selectAll("circle")
-                            .data(data)
+                            .data(data, key)
                             .transition()                     
                             .duration(2000)
-                            .each("start", function() {
-                                d3.select(this)
-                                .style("fill", "rgb(254,178,76)")
-                                .attr("r", 5);
-                            })
                             .attr("cx", function (d) {
                                 if (parseInt(d.starts) === 0) {
                                     return xScale(5);
@@ -408,71 +418,23 @@
                                     return xScale(d.starts);
                                 }
                             })
-                           .attr("cy", function (d) {
-                               if (parseInt(d.completions) === 0) {
-                                   return yScale(5);
-                               } else {
-                                   return yScale(d.completions);
-                               }
-                           })
-     					   .transition()
-     					   .duration(400)
-                           .attr("r", function (d) {
+                            .attr("cy", function (d) {
+                                if (parseInt(d.completions) === 0) {
+                                    return yScale(5);
+                                } else {
+                                    return yScale(d.completions);
+                                }
+                            })
+                            .transition()
+                            .duration(400)
+                            .attr("r", function (d) {
                                 return (2 +  Math.sqrt(d.homelessness));
                             })
-        				    .style("fill", function (d) {
-        				        return color(d.job);
-        				    })
-                            .on("mouseover", over)
-                            .on("mouseout", out);
-               
-                        // Over function, called on mouseover
-                        function over (d, i, ds) {
-                            d3.select(this)
-                                .attr("stroke-width", 1.5)
-                                .attr("stroke", "black");
-                
-                            // Get this circle's x/y values, then augment for the tooltip
-                            var xPosition = 0;
-                            if (parseFloat(d3.select(this).attr("cx")) < ((4 * width) / 5)) {
-                                xPosition = parseFloat(d3.select(this).attr("cx")) + 20;
-                            } else {
-                                xPosition = parseFloat(d3.select(this).attr("cx")) - 20 - 300;
-                            }
-
-                            var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10;
-
-                            // Update the tooltip position and value
-                            d3.select("#tooltip")
-                                .style("left", xPosition + "px")
-                                .style("top", yPosition + "px")
-                                .html('<h1>' + '<a href = "' + d.refArea + '" target="_blank">' + d.authorityName + '</a>' + 
-                                    '</h1>' + '</br>' + 
-                                    "Completed house building" + period[ds] + " : " + 
-                                        '<a href = "' + d.observation + '" target="_blank">' + d.completions + '</a>' + '</br>' + '</br>' +
-                                    "Started house building 2012 - 2013 : " + 
-                                        '<a href = "' + d.observation2 + '" target="_blank">' + d.starts + '</a>' + 
-                                    '</br>' + '</br>' +
-                                    "Numbers of households accommodated by local authorities per 1000 households 2012-Q1 : " + 
-                                        '<a href = "' + d.observation3 + '" target="_blank">' + d.homelessness + '</a>' + 
-                                    '</br>' + '</br>' +  
-                                        '<a href = "http://www.nomisweb.co.uk/articles/649.aspx" target="_blank">' + "Jobs density" + '</a>' + 
-                                    " : " + d.job 
-                                );
-
-                            // Show the tooltip
-                            d3.select("#tooltip").classed("hidden", false);
-                        }
-
-                        // Out function, called on mouseout
-                        function out (d, i) {
-                            d3.select(this)
-                                .attr("stroke", "none");
-                        }  
+                            .style("fill", function (d) {
+                                return color(d.job);
+                            });
                     })
                 });
-				        
-
 			});
     </script>
 </body>
