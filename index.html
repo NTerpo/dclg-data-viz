@@ -61,7 +61,8 @@
 </head>
 
 <body>
-
+    <p>Change period (2011-2012 / 2012_2011)</p>
+    
     <div id="tooltip" class="hidden">
         <p> </p>
     </div>
@@ -86,11 +87,15 @@
             }
             
         // SPARQL query to get data from two sources in a .CSV + NOMIS API
-        var datasource = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0APREFIX+homelessness%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhomelessness%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3Fstarts+%3Fcompletions+%3Fhomelessness+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fcompletions%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++compl%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A+++++++++++++++++++building%3AcompletionsObs+%3Fcompletions+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fstarts%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A++++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A++++++++++++++++++++starts%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A++++++++++++++++++++building%3AstartsObs+%3Fstarts+.%0D%0A+++%7D%0D%0A%0D%0A++++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhomelessness%2Fhouseholds-accommodated-per-1000%2Ftemporary-housing-types%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+quarter%3A2012-Q1+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++homelessness%3AhouseholdsAccommodatedPer1000Obs+%3Fhomelessness+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fstarts%29"
+        var datasource_2012_2013 = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0APREFIX+homelessness%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhomelessness%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3Fstarts+%3Fcompletions+%3Fhomelessness+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fcompletions%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++compl%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A+++++++++++++++++++building%3AcompletionsObs+%3Fcompletions+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fstarts%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A++++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A++++++++++++++++++++starts%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A++++++++++++++++++++building%3AstartsObs+%3Fstarts+.%0D%0A+++%7D%0D%0A%0D%0A++++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhomelessness%2Fhouseholds-accommodated-per-1000%2Ftemporary-housing-types%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+quarter%3A2012-Q1+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++homelessness%3AhouseholdsAccommodatedPer1000Obs+%3Fhomelessness+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fstarts%29"
+        var datasource_2011_2012 = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0APREFIX+homelessness%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhomelessness%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3Fstarts+%3Fcompletions+%3Fhomelessness+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fcompletions%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+year%3A2011-2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++compl%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A+++++++++++++++++++building%3AcompletionsObs+%3Fcompletions+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fstarts%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A++++++++++++++++++++time%3ArefPeriod+year%3A2011-2012+%3B+%0D%0A++++++++++++++++++++starts%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A++++++++++++++++++++building%3AstartsObs+%3Fstarts+.%0D%0A+++%7D%0D%0A%0D%0A++++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhomelessness%2Fhouseholds-accommodated-per-1000%2Ftemporary-housing-types%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+quarter%3A2011-Q2+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++homelessness%3AhouseholdsAccommodatedPer1000Obs+%3Fhomelessness+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fstarts%29";
         var nomisData = "http://www.nomisweb.co.uk/api/v01/dataset/NM_57_1.data.csv?geography=1946157057...1946157382&date=latest&item=3&measures=20100&select=date_name,geography_name,geography_code,item_name,measures_name,obs_value,obs_status_name"
-
+        
+        var datasource = [datasource_2011_2012, datasource_2012_2013];
+        var period = ["2011-2012", "2012-2013"]
+        var ds = 1;
         // Loading data     
-        d3.csv(datasource, function (data) {
+        d3.csv(datasource[1], function (data) {
 
             // Scaling
             var xScale = d3.scale.log()
@@ -329,6 +334,147 @@
                     .text("Jobs density");  
             })
         });
+		
+        
+        
+        /**
+        ** On Click **
+        **/
+        
+        d3.select("p")
+			.on("click", function() {
+                
+                if (ds === 0) {
+                    ds = 1;
+                } else {
+                    ds = 0;
+                }
+
+                
+                d3.csv(datasource[ds], function (data) {
+
+
+                    // Merge dataset with NOMIS dataset
+                    d3.csv(nomisData, function (nomis) {
+                        for (var i = 0; i < data.length; i++) {
+                            // Grab GSS code from ODC dataset
+                            var dataGss = data[i].gssCode;
+
+                            for (var j = 0; j < nomis.length; j++) {
+
+                                var nomisGss = nomis[j].GEOGRAPHY_CODE;
+
+                                if (dataGss == nomisGss) {
+
+                                    // Copy job density value into the ODC csv
+                                    data[i].job = nomis[j].OBS_VALUE;
+                                    break;
+                                } 
+                            }
+                        }
+                        // Scaling
+                        var xScale = d3.scale.log()
+                                                .domain([10, d3.max(data, function (d) {
+                                                                return parseInt(d.starts) ;
+                                                            })
+                                                        ])
+                                                .range([padding, width - padding]);
+                        var yScale = d3.scale.log()
+                                                .domain([10, d3.max(data, function (d) {
+                                                                return parseInt(d.completions) ;
+                                                            })
+                                                        ])
+                                                .range([height - padding, padding]);
+                        
+                        // Color - jobs density data
+                        var color = d3.scale.log()
+                                            .domain([0.3, 1])
+                                            .range(['rgb(240,59,32)','rgb(254,178,76)','rgb(255,237,160)']);
+   
+                        // Pass data to svg
+                        svg.selectAll("circle")
+                            .data(data)
+                            .transition()
+                            .duration(1000)
+                            .each("start", function() {
+                                d3.select(this)
+                                .style("fill", "rgb(254,178,76)")
+                                .attr("r", 4);
+                            })
+                            .attr("cx", function (d) {
+                                if (parseInt(d.starts) === 0) {
+                                    return xScale(5);
+                                } else {
+                                    return xScale(d.starts);
+                                }
+                            })
+                           .attr("cy", function (d) {
+                               if (parseInt(d.completions) === 0) {
+                                   return yScale(5);
+                               } else {
+                                   return yScale(d.completions);
+                               }
+                           })
+     					   .transition()
+     					   .duration(1000)
+                            
+                            .attr("r", function (d) {
+                                return (2 +  Math.sqrt(d.homelessness));
+                            })
+        				    .style("fill", function (d) {
+        				        return color(d.job);
+        				    })
+                            .on("mouseover", over)
+                            .on("mouseout", out);
+               
+                        // Over function, called on mouseover
+                        function over (d, i, ds) {
+                            d3.select(this)
+                                .attr("stroke-width", 1.5)
+                                .attr("stroke", "black");
+                
+                            // Get this circle's x/y values, then augment for the tooltip
+                            var xPosition = 0;
+                            if (parseFloat(d3.select(this).attr("cx")) < ((4 * width) / 5)) {
+                                xPosition = parseFloat(d3.select(this).attr("cx")) + 20;
+                            } else {
+                                xPosition = parseFloat(d3.select(this).attr("cx")) - 20 - 300;
+                            }
+
+                            var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10;
+
+                            // Update the tooltip position and value
+                            d3.select("#tooltip")
+                                .style("left", xPosition + "px")
+                                .style("top", yPosition + "px")
+                                .html('<h1>' + '<a href = "' + d.refArea + '" target="_blank">' + d.authorityName + '</a>' + 
+                                    '</h1>' + '</br>' + 
+                                    "Completed house building" + period[ds] + " : " + 
+                                        '<a href = "' + d.observation + '" target="_blank">' + d.completions + '</a>' + '</br>' + '</br>' +
+                                    "Started house building 2012 - 2013 : " + 
+                                        '<a href = "' + d.observation2 + '" target="_blank">' + d.starts + '</a>' + 
+                                    '</br>' + '</br>' +
+                                    "Numbers of households accommodated by local authorities per 1000 households 2012-Q1 : " + 
+                                        '<a href = "' + d.observation3 + '" target="_blank">' + d.homelessness + '</a>' + 
+                                    '</br>' + '</br>' +  
+                                        '<a href = "http://www.nomisweb.co.uk/articles/649.aspx" target="_blank">' + "Jobs density" + '</a>' + 
+                                    " : " + d.job 
+                                );
+
+                            // Show the tooltip
+                            d3.select("#tooltip").classed("hidden", false);
+                        }
+
+                        // Out function, called on mouseout
+                        function out (d, i) {
+                            d3.select(this)
+                                .attr("stroke", "none");
+                        }  
+                    })
+                });
+				        
+
+			});
     </script>
 </body>
 </html>
