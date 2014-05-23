@@ -12,7 +12,7 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 * Radius = Numbers of households accommodated by local authorities per 1000 households 2012-Q1
 * Color = Function of 2012 jobs density
 
-[Demo with 2 periods datasets and transitions](http://jsfiddle.net/nicolasterpolilli/7ed26/2/embedded/result/)
+[Demo with 2 periods datasets and transitions](http://jsfiddle.net/nicolasterpolilli/7ed26/3/embedded/result/)
 
 ## Informations
 
