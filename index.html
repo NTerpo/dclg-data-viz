@@ -99,6 +99,8 @@
         var datasource =    [datasource_2011_2012,
                             datasource_2012_2013
                             ];
+                            
+        // Used to select the dataset to show                        
         var ds = datasource.length - 1;
         
         
@@ -108,7 +110,7 @@
                             .range(['rgb(240,59,32)','rgb(255,237,160)']);
 
         // Loading data     
-        d3.csv(datasource[1], function (data) {
+        d3.csv(datasource[ds], function (data) {
 
             // Scaling
             var xScale = d3.scale.log()
