@@ -25,7 +25,7 @@
         #change_period {
             position:relative;
             left: 1000px;
-            top: 30px;
+            top: 40px;
             width: auto;
             height: auto;
             padding: 10px;
@@ -164,7 +164,7 @@
 
                 // Color - jobs density data
                 var color = d3.scale.log()
-                                    .domain([0.3, 2])
+                                    .domain([0.2, 2])
                                     .range(['rgb(240,59,32)','rgb(255,237,160)']);
    
                 // Pass data to svg
@@ -187,7 +187,7 @@
                         }
                     })
                     .attr("r", function (d) {
-                        return (2 +  Math.sqrt(d.homelessness));
+                        return (2.5 + 0.8 * Math.sqrt(d.homelessness));
                     })
 				    .style("fill", function (d) {
 				        return color(d.job);
@@ -303,6 +303,7 @@
                    .append("text")
                     .attr("class", "label")
                     .attr("transform", "rotate(-90)")
+                    .attr("x", - padding)
                     .attr("y", 6)
                     .attr("dy", ".71em")
                     .style("text-anchor", "end")
@@ -447,7 +448,7 @@
                             .transition()
                             .duration(400)
                             .attr("r", function (d) {
-                                return (2 +  Math.sqrt(d.homelessness));
+                                return (2.5 +  0.8 * Math.sqrt(d.homelessness));
                             })
                             .style("fill", function (d) {
                                 return color(d.job);
