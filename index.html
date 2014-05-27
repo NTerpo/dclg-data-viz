@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>DLCG-NOMIS data visualisation</title>
+    <title>Housing in England</title>
 
     <style>
         .axis path,
@@ -164,8 +164,8 @@
 
                 // Color - jobs density data
                 var color = d3.scale.log()
-                                    .domain([0.3, 1])
-                                    .range(['rgb(240,59,32)','rgb(254,178,76)','rgb(255,237,160)']);
+                                    .domain([0.3, 2])
+                                    .range(['rgb(240,59,32)','rgb(255,237,160)']);
    
                 // Pass data to svg
                 svg.selectAll("circle")
@@ -325,22 +325,28 @@
                     .text("completed = +/- 30% started");
                     
                 // Legend circles 
-                var legend = svg.selectAll(".legend")
-                    .data(color.range())
-                    .enter().append("g")
+                svg.append("rect")
                     .attr("class", "legend")
-                    .attr("transform", function(d, i) { 
-                        return "translate(" +  i * 40 +" ,0)"; 
-                    });
-
-                legend.append("rect")
                     .attr("x", width - 155)
                     .attr("y", height - padding - 80)
-                    .attr("width", 35)
+                    .attr("width", 110)
                     .attr("height", 10)
-                    .style("fill", function (d, i) {
-                        return d;
-                    });
+                    .style("fill", "url(#gradient)");
+                    
+                svg.append("linearGradient")
+                    .attr("id", "gradient")
+                    .attr("x1", "0%")
+                    .attr("y1", "0%")
+                    .attr("x2", "100%")
+                    .attr("y2", "0%")
+                   .selectAll("stop")
+                    .data([
+                        {offset: "0%", color: color.range()[0]},
+                        {offset: "100%", color: color.range()[1]}
+                    ])
+                   .enter().append("stop")
+                    .attr("offset", function(d) { return d.offset; })
+                    .attr("stop-color", function(d) { return d.color; });   
                 
                 svg.append("text")
                     .attr("class", "label")
@@ -348,7 +354,7 @@
                     .attr("y", height - padding - 60)
                     .attr("dy", ".35em")
                     .style("text-anchor", "end")
-                    .text("> 2");
+                    .text("> " + color.domain()[1]);
                 
                 svg.append("text")
                     .attr("class", "label")
@@ -356,7 +362,7 @@
                     .attr("y", height - padding - 60)
                     .attr("dy", ".35em")
                     .style("text-anchor", "end")
-                    .text("0.3 <");
+                    .text(color.domain()[0] + " <");
                 
                 svg.append("text")
                     .attr("class", "label")
