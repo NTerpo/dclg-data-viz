@@ -5,6 +5,7 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 ## Demo
 
 [Demo](http://jsfiddle.net/nicolasterpolilli/Ran9A/14/embedded/result/)
+
 [Demo with 2 periods datasets and transition](http://jsfiddle.net/nicolasterpolilli/7ed26/3/embedded/result/)
 
 * X axis = Permanent dwellings started, 2009/10 to 2012/13 
