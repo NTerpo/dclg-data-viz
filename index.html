@@ -101,6 +101,12 @@
                             ];
         var ds = datasource.length - 1;
         
+        
+        // Color - jobs density data
+        var color = d3.scale.log()
+                            .domain([0.2, 2])
+                            .range(['rgb(240,59,32)','rgb(255,237,160)']);
+
         // Loading data     
         d3.csv(datasource[1], function (data) {
 
@@ -163,11 +169,6 @@
                         } 
                     }
                 }
-
-                // Color - jobs density data
-                var color = d3.scale.log()
-                                    .domain([0.2, 2])
-                                    .range(['rgb(240,59,32)','rgb(255,237,160)']);
    
                 // Pass data to svg
                 svg.selectAll("circle")
@@ -423,7 +424,7 @@
                                                         ])
                                                 .range([height - padding, padding]);
                     
-
+                                                
                         // Key function to bind data to element via gsscode
                         var key = function(d) {
                             return d.gssCode;
@@ -447,14 +448,14 @@
                                     return yScale(d.completions);
                                 }
                             })
-                            .transition()
-                            .duration(400)
                             .attr("r", function (d) {
                                 return (2.5 +  0.8 * Math.sqrt(d.homelessness));
                             })
                             .style("fill", function (d) {
                                 return color(d.job);
-                            });
+                            })
+                            .transition()
+                            .duration(400);
                     })
                 });
             });
