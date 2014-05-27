@@ -6,11 +6,13 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 
 [Demo](http://jsfiddle.net/nicolasterpolilli/7ed26/4/embedded/result/)
 
-* X axis = Permanent dwellings started, 2009/10 to 2012/13 
-* Y axis = Permanent dwellings completed, circle = 1 local authority
+* X axis = Permanent dwellings started, 2011-12 / 2012-13 
+* Y axis = Permanent dwellings completed, 2011-12 / 2012-13 
+* Circles = Local authorities
 * Radius = Numbers of households accommodated by local authorities per 1000 households 2012-Q1
-* Color = Function of 2012 jobs density
+* Color = Function of 2012 jobs density, logarithmic scale
 * Tooltip onclick with links to ressources URI
+* Logarithmic scale
 
 
 ## Informations
