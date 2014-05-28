@@ -206,9 +206,9 @@
                             // Get this circle's x/y values, then augment for the tooltip
                             var xPosition = 0;
                             if (parseFloat(d3.select(this).attr("cx")) < ((4 * width) / 5)) {
-                                xPosition = parseFloat(d3.select(this).attr("cx")) + 10;
+                                xPosition = parseFloat(d3.select(this).attr("cx")) + 15;
                             } else {
-                                xPosition = parseFloat(d3.select(this).attr("cx")) - 20 - 185;
+                                xPosition = parseFloat(d3.select(this).attr("cx")) - 25 - 185;
                             }
                             
                             var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10;

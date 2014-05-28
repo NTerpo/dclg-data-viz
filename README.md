@@ -26,3 +26,7 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
     * [Help to use NOMIS API](https://github.com/the-frey/odc_nomis)
 * d3.js for visualization
 * [ColorBrewer2](http://colorbrewer2.org)
+
+## Improve ?
+
+* ODC API query ~ 100ms / NOMIS API query ~ 400ms  
