@@ -864,5 +864,12 @@ Here's what you should have :
 
 ![screenshot9](./Tutorial/screenshot9.png)
 
+Remember that [you can access the whole code on GitHub !](https://github.com/NTerpo/DCLG_data_visualization)
 
 ## Conclusion
+
+It remains a lot of stuff to do to improve the scatter plot, here are some examples :
+
+* You can ask yourself what do we learn with this data visualization
+* With this code we merge both databases everytime we click the button (+ ~600 ms for each HTTP GET) : maybe it's possible to improve loading times
+* Make a responsive scatter plot 
