@@ -21,7 +21,7 @@ Still difficult to imagine ? Don't worry we will try it on an example but you do
 There are more and more linked data available but we will focus on Open Data Communities which is the UK Department for Communities and Local Government's official Linked Open Data site.
 Data are organized by theme and we are first going to work on [House building data](http://opendatacommunities.org/themes/house-building).
 
-==> screenshot 1
+![Screenshot 1](./Tutorial/screenshot1.png)
 
 The scatter plot we are going to make will compare the number of houses started and the number of houses completed, in one year, for each local authority in England.
 The X axis will be house started and the Y axis will be house completed. Later on the tutorial we will add labour market data and homelessness data so the scatter plot 
@@ -291,11 +291,195 @@ Given the distribution of our data we will use a logarithmic scale (you can star
 
 ### Circles
 
+It's time for the nice part of the code : you are just about see the data ! The point here is that we use a log scale so you don't want to have any "log(0)". That's why we place an if statement for the "cx" and "cy" attributes :
+
+>       // Pass data to svg
+        svg.selectAll("circle")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("cx", function (d) {
+                if (parseInt(d.starts) === 0) {
+                    return xScale(5);
+                } else {
+                    return xScale(d.starts);
+                }
+            })
+            .attr("cy", function (d) {
+                if (parseInt(d.completions) === 0) {
+                    return yScale(5);
+                } else {
+                    return yScale(d.completions);
+                }
+            })
+            .attr("r", function (d) {
+                return (2.5);
+            })
+		    .style("fill", "black");
+
+You must have something like that when you reload your browser :
+![Screenshot 2](./Tutorial/screenshot2.png)
+
+Of course it's not exactly what you expected yet but it's a good first step ! Now let's add some axis and informations ;)
+        
 ### Axis
+
+>       // Axis
+        var formatSi = d3.format(".4");
+            svg.append("g")
+                .attr("class", "axis") 
+                .attr("transform", "translate(0," + (height - padding) + ")")     
+                .call(d3.svg.axis()
+                .scale(xScale)
+                .orient("bottom")
+                .ticks(5, function(d, i) {
+                    return formatSi(d);
+                }))
+                .append("text")
+                .attr("class", "label")
+                .attr("x", width - padding)
+                .attr("y", -6)
+                .style("text-anchor", "end")
+                .text("started building house");
+
+            svg.append("g")
+                .attr("class", "axis") 
+                .attr("transform", "translate(" + padding + ",0)")
+                .call(d3.svg.axis()
+            .scale(yScale)
+                .orient("left")
+                .ticks(5, function(d, i) {
+                    return formatSi(d);
+                }))
+                .append("text")
+                .attr("class", "label")
+                .attr("transform", "rotate(-90)")
+                .attr("x", - padding)
+                .attr("y", 6)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("completed building house");
+
+Not bad but that is the moment when we start thinking about the style...
+
+>       .axis path,
+        .axis line {
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+        .axis text {
+            font-family: sans-serif;
+            font-size: 10px;
+        }
+        .label {
+            font-family: sans-serif;
+            font-size: 10px;
+        }
 
 ### Tooltip
 
+Our scatter plot is not really useful for the moment, we have got some points but we don't know what they represent... I propose you to add a tooltip so when you click on a point you can know the local authority and the house building data :
+
+First you neef too add a little bit of html : 
+
+>       <div id="tooltip" class="hidden">
+            <p> </p>
+        </div>       
+
+Then a little bit of CSS : 
+
+>       #tooltip {
+            position: absolute;
+            width: 200px;
+            height: auto;
+            padding: 5px;
+            background-color: rgb(245,245,245);
+            opacity: 0.7;
+            -webkit-border-radius: 10px;
+            -moz-border-radius: 10px;
+            border-radius: 10px;
+            -webkit-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+            -moz-box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.4);
+        }
+        #tooltip.hidden {
+            display: none;
+        }
+        #tooltip p {
+            margin: 0;
+            font-family: Arial, "Lucida Grande", sans-serif;
+            line-height: 15px;
+        }
+        #tooltip span {
+            font-family: sans-serif;
+            font-size: 10px;
+        }
+        #tooltip a{
+            text-decoration: none
+        }
+
+And a quite big part of Js just after the style attribute of your circles :        
+
+>       .attr("r", function (d) {
+            return (2.5);
+        })
+	    .style("fill", "black")
+        .on("click", function (d, i) {
+            var tooltip = d3.select("#tooltip");
+            if (tooltip.classed("hidden") == true) {                
+            // Define and show the tooltip
+                // Get this circle's x/y values, then augment for the tooltip
+                var xPosition = 0;
+                if (parseFloat(d3.select(this).attr("cx")) < ((4 * width) / 5)) {
+                    xPosition = parseFloat(d3.select(this).attr("cx")) + 15;
+                } else {
+                    xPosition = parseFloat(d3.select(this).attr("cx")) - 25 - 185;
+                }            
+                var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10
+                // Update the tooltip position and value
+                d3.select("#tooltip")
+                    .style("left", xPosition + "px")
+                    .style("top", yPosition + "px")
+                    .html('<h3>' + '<a href = "' + d.refArea + '" target="_blank">' + d.authorityName + '</a>' + 
+                            '</h3>' + 
+                            '<span>' + 
+                            "Completed house building " + (d.observation).split("/")[7] + " : " + 
+                            '</span>' +
+                            '<a href = "' + d.observation + '" target="_blank">' + d.completions + '</a>' + 
+                            '</br>' +
+                            '<span>' +
+                            "Started house building " + (d.observation).split("/")[7] + " : " +  
+                            '</span>' +
+                            '<a href = "' + d.observation2 + '" target="_blank">' + d.starts + '</a>' + 
+                            '</br>' + 
+                            '<span>' +
+                            "Numbers of households accommodated by local authorities per 1000 households " 
+                            + (d.observation3).split("/")[7] + " : " + 
+                            '</span>' +
+                            '<a href = "' + d.observation3 + '" target="_blank">' + d.homelessness + '</a>' + 
+                            '</br>' + 
+                            '<span>' +
+                            '<a href = "http://www.nomisweb.co.uk/articles/649.aspx" target="_blank">' + "Jobs density" + '</a>' + 
+                            " : " + 
+                            '</span>' +
+                            d.job
+                    );
+                    // Show the tooltip
+                    d3.select("#tooltip").classed("hidden", false);
+                } else {        
+                    // Hide the tooltip
+                    d3.select("#tooltip").classed("hidden", true);
+                }
+            });
+
+![screenshot3](./Tutorial/screenshot3.png)
+
+That's not bad but we are going to improve it on third step of this tutorial...
+
 ## Step three, improve your visualization 
+
+### Acceptable area
 
 ### Color
 
