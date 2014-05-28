@@ -32,14 +32,14 @@ can help you understand the housing policy of each local authority.
 So let's get those data !! The main query language for querying RDF data is SPARQL. There are [some pretty good tutorials about SPARQL](https://jena.apache.org/tutorials/sparql.html) and, here I just want to show you how it works and how to understand the logic behind it. RDF data are expressed with triples : subject, predicate (the link between two ressources) and object. Data are like sentences : "The sky" (subject) "has" (predicate) "the color blue" (object). 
 A SPARQL query looks like this : 
 
->       SELECT ?x
+        SELECT ?x
         WHERE {
             ?x  <http://www.w3.org/2001/vcard-rdf/3.0#FN>  "John Smith" 
         }
 
 You recognize the triple and we can make it more readable, using PREFIX :
 
->       PREFIX w3: <http://www.w3.org/2001/vcard-rdf/3.0#>
+        PREFIX w3: <http://www.w3.org/2001/vcard-rdf/3.0#>
         SELECT ?x
         WHERE {
             ?x  w3:FN  "John Smith" 
@@ -51,7 +51,7 @@ By [exploring the data](http://opendatacommunities.org/data/house-building/compl
 
 We want to know, for each local authorities, how many houses have been completed during, let's say, 2012-2013. So our query will start like this : 
 
->       SELECT * WHERE {
+        SELECT * WHERE {
         ?observation <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://purl.org/linked-data/cube#Observation> ;
             <http://opendatacommunities.org/def/ontology/time/refPeriod> <http://reference.data.gov.uk/id/government-year/2012-2013> ; 
             <http://opendatacommunities.org/def/ontology/geography/refArea> ?refArea ; 
@@ -59,7 +59,7 @@ We want to know, for each local authorities, how many houses have been completed
 
 which means : "What we would like to know is an observation, concerning the time period 2012-2013, a variable of which is the refArea". With prefixes you get :
 
->       PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/> // that's new !!
+        PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/> // that's new !!
         PREFIX year: <http://reference.data.gov.uk/id/government-year/> // that's new !!
         PREFIX cube: <http://purl.org/linked-data/cube#> // that's new !!
         PREFIX time: <http://opendatacommunities.org/def/ontology/time/> // that's new !!
@@ -76,7 +76,7 @@ Now we want to get informations about houses completed. This part is a bit weird
 
 To complete the observation characterization you have to add those two lines : 
 
->       PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/>
+        PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/>
         PREFIX year: <http://reference.data.gov.uk/id/government-year/>
         PREFIX cube: <http://purl.org/linked-data/cube#>
         PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
@@ -93,7 +93,7 @@ To complete the observation characterization you have to add those two lines :
 
 It's a first good step but you still have to explain what is refArea !
    
->       PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
+        PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
         PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/>
         PREFIX gov: <http://opendatacommunities.org/def/local-government/> // that's new !!
         PREFIX osgeo:  <http://data.ordnancesurvey.co.uk/ontology/admingeo/> // that's new !!
@@ -120,7 +120,7 @@ We almost have a good query, we just need 2 or 3 more steps ! Stay focused !
 
 First we will select exactly the informations we need, instead of that "*" :
 
->       PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
+        PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
         PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/>
         PREFIX gov: <http://opendatacommunities.org/def/local-government/>
         PREFIX osgeo:  <http://data.ordnancesurvey.co.uk/ontology/admingeo/>
@@ -143,7 +143,7 @@ First we will select exactly the informations we need, instead of that "*" :
         
 Now remember : we want a scatter plot with both [completed](http://opendatacommunities.org/data/house-building/completions/tenure) and [started](http://opendatacommunities.org/data/house-building/starts/tenure) house data : we are going to combine everything in the same query with a second observation :
 
->       PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
+        PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
         PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/>
         PREFIX gov: <http://opendatacommunities.org/def/local-government/>
         PREFIX osgeo:  <http://data.ordnancesurvey.co.uk/ontology/admingeo/>
@@ -168,9 +168,10 @@ Now remember : we want a scatter plot with both [completed](http://opendatacommu
                 gov:isGovernedBy ?authority .
         ?authority rdfs:label ?authorityName .
         }
+        
 Almost there ! Two last things are important : first we will order our data by number of started houses (our X axis). And SPARQL allow us **to focus the query** on certain graphs to be more efficient. Finally our query is : 
 
->       PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
+        PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
         PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/>
         PREFIX gov: <http://opendatacommunities.org/def/local-government/>
         PREFIX osgeo:  <http://data.ordnancesurvey.co.uk/ontology/admingeo/>
@@ -218,7 +219,7 @@ Everything fine ? Don't hesitate to ask anything on the comment box ! We are now
 If you want to discover all what d3 can do for you [I highly recommand Scott Murray's tutorial](http://chimera.labs.oreilly.com/books/1230000000345/index.html) !
 D3 means Data Driven Document : we've got the data so we now need a document ! We start with a really classic HTML page and we add a line of code to call the d3.js library : index.html
 
->       <!DOCTYPE html>
+        <!DOCTYPE html>
         <html>
         <head>
             <meta charset="utf-8">
@@ -237,7 +238,7 @@ D3 means Data Driven Document : we've got the data so we now need a document ! W
 
 D3 use [SVG](http://fr.wikipedia.org/wiki/Scalable_Vector_Graphics) to bind data to the document, so the first step will be to create the svg between the 'script'
 
->       var width = 1000,
+        var width = 1000,
             height = 700;
         var padding = 40;
         var svg = d3.select("body")
@@ -247,7 +248,7 @@ D3 use [SVG](http://fr.wikipedia.org/wiki/Scalable_Vector_Graphics) to bind data
 
 Then we add the link to the API we copied earlier : 
 
->       var width = 1000,
+        var width = 1000,
             height = 700;
         var padding = 40;
         var svg = d3.select("body")
@@ -260,13 +261,13 @@ Then we add the link to the API we copied earlier :
 
 Now we can load the data with d3:
 
->       // Loading data     
+        // Loading data     
             d3.csv(datasource, function (data) {
             // next steps code go here
             })
 At this step you can start a server with your terminal on the root directory of index.html 
 
->       $ python -m SimpleHTTPServer 8080
+        $ python -m SimpleHTTPServer 8080
 
 And open a browser at http://localhost:8080 to see your document. If you open the console (for e.g. Firebug on Firefox) and reload the page you'll see that an [HTTP GET request](http://www.w3schools.com/tags/ref_httpmethods.asp) is made to Open Data Communities : data are loaded !
 
@@ -274,7 +275,7 @@ And open a browser at http://localhost:8080 to see your document. If you open th
 
 Given the distribution of our data we will use a logarithmic scale (you can start with a linear one and see by yourself why we choose a log one). We use the d3 scale function to create two variables xScale and yScale :
 
->       // Scaling
+        // Scaling
         var xScale = d3.scale.log()
                 .domain([10, d3.max(data, function (d) {
                             return parseInt(d.starts) ;
@@ -293,7 +294,7 @@ Given the distribution of our data we will use a logarithmic scale (you can star
 
 It's time for the nice part of the code : you are just about see the data ! The point here is that we use a log scale so you don't want to have any "log(0)". That's why we place an if statement for the "cx" and "cy" attributes :
 
->       // Pass data to svg
+        // Pass data to svg
         svg.selectAll("circle")
             .data(data)
             .enter()
@@ -324,7 +325,7 @@ Of course it's not exactly what you expected yet but it's a good first step ! No
         
 ### Axis
 
->       // Axis
+        // Axis
         var formatSi = d3.format(".4");
             svg.append("g")
                 .attr("class", "axis") 
@@ -362,7 +363,7 @@ Of course it's not exactly what you expected yet but it's a good first step ! No
 
 Not bad but that is the moment when we start thinking about the style...
 
->       .axis path,
+        .axis path,
         .axis line {
             fill: none;
             stroke: black;
@@ -383,13 +384,13 @@ Our scatter plot is not really useful for the moment, we have got some points bu
 
 First you neef too add a little bit of html : 
 
->       <div id="tooltip" class="hidden">
+        <div id="tooltip" class="hidden">
             <p> </p>
         </div>       
 
 Then a little bit of CSS : 
 
->       #tooltip {
+        #tooltip {
             position: absolute;
             width: 200px;
             height: auto;
@@ -421,7 +422,7 @@ Then a little bit of CSS :
 
 And a quite big part of Js just after the style attribute of your circles :        
 
->       .attr("r", function (d) {
+        .attr("r", function (d) {
             return (2.5);
         })
 	    .style("fill", "black")
