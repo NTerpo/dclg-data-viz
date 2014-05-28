@@ -215,7 +215,79 @@ Everything fine ? Don't hesitate to ask anything on the comment box ! We are now
 
 ## Step two, basic scatter plot with d3.js
 
+If you want to discover all what d3 can do for you [I highly recommand Scott Murray's tutorial](http://chimera.labs.oreilly.com/books/1230000000345/index.html) !
+D3 means Data Driven Document : we've got the data so we now need a document ! We start with a really classic HTML page and we add a line of code to call the d3.js library : index.html
+
+>       <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="utf-8">
+            <title>Housing in England</title>
+            <style>
+            </style>
+            <!-- d3.js library -->
+            <script src="http://d3js.org/d3.v3.min.js"></script>
+        </head>
+        <body>
+            <script>
+            // your d3.js code come here
+            </script>
+        </body>
+        </html>
+
+D3 use [SVG](http://fr.wikipedia.org/wiki/Scalable_Vector_Graphics) to bind data to the document, so the first step will be to create the svg between the 'script'
+
+>       var width = 1000,
+            height = 700;
+        var padding = 40;
+        var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+
+Then we add the link to the API we copied earlier : 
+
+>       var width = 1000,
+            height = 700;
+        var padding = 40;
+        var svg = d3.select("body")
+                    .append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+        var datasource = "http://LinkYouCopiedAtStepOne"
+
 ### Load data
+
+Now we can load the data with d3:
+
+>       // Loading data     
+            d3.csv(datasource, function (data) {
+            // next steps code go here
+            })
+At this step you can start a server with your terminal on the root directory of index.html 
+
+>       $ python -m SimpleHTTPServer 8080
+
+And open a browser at http://localhost:8080 to see your document. If you open the console (for e.g. Firebug on Firefox) and reload the page you'll see that an [HTTP GET request](http://www.w3schools.com/tags/ref_httpmethods.asp) is made to Open Data Communities : data are loaded !
+
+### Scale
+
+Given the distribution of our data we will use a logarithmic scale (you can start with a linear one and see by yourself why we choose a log one). We use the d3 scale function to create two variables xScale and yScale :
+
+>       // Scaling
+        var xScale = d3.scale.log()
+                .domain([10, d3.max(data, function (d) {
+                            return parseInt(d.starts) ;
+                        })
+                ])
+                .range([padding, width - padding]);
+        var yScale = d3.scale.log()
+                .domain([10, d3.max(data, function (d) {
+                            return parseInt(d.completions) ;
+                        })
+                ])
+                .range([height - padding, padding]);
+
 
 ### Circles
 
