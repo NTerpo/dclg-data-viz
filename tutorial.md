@@ -7,7 +7,7 @@ I had some knowledge in web developpement but I was almost a newbie, you just ne
 * Query an API
 * Visualize data on a scatter plot using [d3.js](http://d3js.org)
 
-[You can access the code on GitHub](https://github.com/NTerpo/DCLG_data_visualization) and [here is the demo](http://jsfiddle.net/nicolasterpolilli/7ed26/5/embedded/result/)
+[You can access the code on GitHub](https://github.com/NTerpo/DCLG_data_visualization) and [here is the demo of what are we going to do.](http://jsfiddle.net/nicolasterpolilli/7ed26/5/embedded/result/)
 
 ## Step one, find linked data
 
@@ -59,11 +59,11 @@ We want to know, for each local authorities, how many houses have been completed
 
 which means : "What we would like to know is an observation, concerning the time period 2012-2013, a variable of which is the refArea". With prefixes you get :
 
->       PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/>
-        PREFIX year: <http://reference.data.gov.uk/id/government-year/>
-        PREFIX cube: <http://purl.org/linked-data/cube#>
-        PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
-        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+>       PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/> // that's new !!
+        PREFIX year: <http://reference.data.gov.uk/id/government-year/> // that's new !!
+        PREFIX cube: <http://purl.org/linked-data/cube#> // that's new !!
+        PREFIX time: <http://opendatacommunities.org/def/ontology/time/> // that's new !!
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> // that's new !!
         SELECT * WHERE {
         ?observation rdf:type cube:Observation ;
                    time:refPeriod year:2012-2013 ; 
@@ -87,20 +87,20 @@ To complete the observation characterization you have to add those two lines :
         ?observation rdf:type cube:Observation ;
                    time:refPeriod year:2012-2013 ; 
                    geo:refArea ?refArea ;
-                   compl:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
-                   building:completionsObs ?completions .
+                   compl:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ; // that's new !!
+                   building:completionsObs ?completions . // that's new !!
         }
 
 It's a first good step but you still have to explain what is refArea !
    
 >       PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
         PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/>
-        PREFIX gov: <http://opendatacommunities.org/def/local-government/>
-        PREFIX osgeo:  <http://data.ordnancesurvey.co.uk/ontology/admingeo/>
+        PREFIX gov: <http://opendatacommunities.org/def/local-government/> // that's new !!
+        PREFIX osgeo:  <http://data.ordnancesurvey.co.uk/ontology/admingeo/> // that's new !!
         PREFIX year: <http://reference.data.gov.uk/id/government-year/>
         PREFIX cube: <http://purl.org/linked-data/cube#>
         PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
-        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> // that's new !!
         PREFIX building: <http://opendatacommunities.org/def/ontology/house-building/>
         PREFIX compl: <http://opendatacommunities.org/def/ontology/house-building/completions/> 
         SELECT * WHERE {
@@ -109,9 +109,9 @@ It's a first good step but you still have to explain what is refArea !
                    geo:refArea ?refArea ;
                    compl:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
                    building:completionsObs ?completions .   
-        ?refArea osgeo:gssCode ?gssCode ; 
-                gov:isGovernedBy ?authority .
-        ?authority rdfs:label ?authorityName .
+        ?refArea osgeo:gssCode ?gssCode ;  // that's new !!
+                gov:isGovernedBy ?authority . // that's new !!
+        ?authority rdfs:label ?authorityName . // that's new !!
         }
         
 Now you are saying : "What we would like to know is an observation, concerning the time period 2012-2013, a variable of which is the refArea and which concerns what we call completions. The refArea would be the GSS code ; each refArea is governed by an authority and we do need the name of that authority !"
@@ -130,7 +130,7 @@ First we will select exactly the informations we need, instead of that "*" :
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX building: <http://opendatacommunities.org/def/ontology/house-building/>
         PREFIX compl: <http://opendatacommunities.org/def/ontology/house-building/completions/> 
-        SELECT ?refArea ?observation ?gssCode ?authorityName ?completions WHERE {
+        SELECT ?refArea ?observation ?gssCode ?authorityName ?completions WHERE { // that's new !!
         ?observation rdf:type cube:Observation ;
                    time:refPeriod year:2012-2013 ; 
                    geo:refArea ?refArea ;
@@ -141,7 +141,7 @@ First we will select exactly the informations we need, instead of that "*" :
         ?authority rdfs:label ?authorityName .
         }
         
-Now remember : we want a scatter plot with both [completed](http://opendatacommunities.org/data/house-building/completions/tenure) and [started](http://opendatacommunities.org/data/house-building/starts/tenure) house data : we are going to combine everything in the same query :
+Now remember : we want a scatter plot with both [completed](http://opendatacommunities.org/data/house-building/completions/tenure) and [started](http://opendatacommunities.org/data/house-building/starts/tenure) house data : we are going to combine everything in the same query with a second observation :
 
 >       PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
         PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/>
@@ -153,17 +153,17 @@ Now remember : we want a scatter plot with both [completed](http://opendatacommu
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX building: <http://opendatacommunities.org/def/ontology/house-building/>
         PREFIX compl: <http://opendatacommunities.org/def/ontology/house-building/completions/> 
-        SELECT ?refArea ?observation ?gssCode ?authorityName ?completions ?starts ?observation2 WHERE {
+        SELECT ?refArea ?observation ?gssCode ?authorityName ?completions ?starts ?observation2 WHERE { // that's new !!
         ?observation rdf:type cube:Observation ;
                    time:refPeriod year:2012-2013 ; 
                    geo:refArea ?refArea ;
                    compl:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
                    building:completionsObs ?completions .   
-        ?observation2 rdf:type cube:Observation ;
-                      time:refPeriod year:2012-2013 ; 
-                      starts:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
-                      geo:refArea ?refArea ; 
-                      building:startsObs ?starts .
+        ?observation2 rdf:type cube:Observation ; // that's new !!
+                      time:refPeriod year:2012-2013 ;  // that's new !!
+                      starts:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ; // that's new !!
+                      geo:refArea ?refArea ;  // that's new !!
+                      building:startsObs ?starts . // that's new !!
         ?refArea osgeo:gssCode ?gssCode ; 
                 gov:isGovernedBy ?authority .
         ?authority rdfs:label ?authorityName .
@@ -182,36 +182,36 @@ Almost there ! Two last things are important : first we will order our data by n
         PREFIX starts: <http://opendatacommunities.org/def/ontology/house-building/starts/>
         PREFIX compl: <http://opendatacommunities.org/def/ontology/house-building/completions/>
         SELECT ?refArea ?observation ?gssCode ?authorityName ?completions ?starts ?observation2 WHERE { 
-            GRAPH <http://opendatacommunities.org/graph/house-building/completions/tenure> { 
+            GRAPH <http://opendatacommunities.org/graph/house-building/completions/tenure> { // that's new !!
                 ?observation rdf:type cube:Observation ;
                    time:refPeriod year:2012-2013 ; 
                    geo:refArea ?refArea ; 
                    compl:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
                    building:completionsObs ?completions .
                }
-            GRAPH <http://opendatacommunities.org/graph/house-building/starts/tenure> { 
+            GRAPH <http://opendatacommunities.org/graph/house-building/starts/tenure> { // that's new !!
                 ?observation2 rdf:type cube:Observation ;
                     time:refPeriod year:2012-2013 ; 
                     starts:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
                     geo:refArea ?refArea ; 
                     building:startsObs ?starts .
                 }
-            GRAPH <http://opendatacommunities.org/graph/ontology/geography/ons-labels> {
+            GRAPH <http://opendatacommunities.org/graph/ontology/geography/ons-labels> { // that's new !!
                 ?refArea osgeo:gssCode ?gssCode ; 
                       gov:isGovernedBy ?authority .
                 }
-            GRAPH <http://opendatacommunities.org/graph/local-authorities> { 
+            GRAPH <http://opendatacommunities.org/graph/local-authorities> { // that's new !!
                 ?authority rdfs:label ?authorityName .
                 }
-        } ORDER BY(?starts)
+        } ORDER BY(?starts) // that's new !!
         
 Here we are ! I hope you are proud because you just acheived your first SPARQL query ! [TEST IT !](http://opendatacommunities.org/sparql?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0A%0D%0ASELECT+%3FrefArea+%3Fobservation+%3FgssCode+%3FauthorityName+%3Fcompletions+%3Fstarts+%3Fobservation2+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fcompletions%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++compl%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A+++++++++++++++++++building%3AcompletionsObs+%3Fcompletions+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fstarts%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A++++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A++++++++++++++++++++starts%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A++++++++++++++++++++building%3AstartsObs+%3Fstarts+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fstarts%29)
 
 ### API
 
-Now that we have the data, we want an easy access at those data and we want the data to be the more up to date as possible so we will use the API proposed by Open Data Communities. Just under your query (on the last link) you have an API part where you can select the format of the result, choose CSV and copy the link given.
+Now that we have the data, we want an easy access to those data and we want the data to be the more up-to-date as possible so we will use the API proposed by Open Data Communities. Just under your query (on the last link) you have an API part where you can select the format of the result, choose CSV and copy the link given.
 
-Everything fine ? Don't hesitate to ask anything on the comment box ! We are now going to attack the visualization part which is really easier in my opinion.
+Everything fine ? Don't hesitate to ask anything on the comment box ! We are now going to attack the visualization part, which is really easier in my opinion.
 
 ## Step two, basic scatter plot with d3.js
 
