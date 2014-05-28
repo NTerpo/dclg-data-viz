@@ -711,6 +711,158 @@ With everything you've learnt, displaying a legend should be easy now. Difficult
             
 ![screenshot8](./Tutorial/screenshot8.png)
 
+### Mouse over / out
+
+Just a little piece of code to stroke the circles on mouse over (better visualization) :
+
+        .on("mouseover", over)
+        .on("mouseout", out);
+
+        // Over function, called on mouseover
+        function over (d, i) {
+            d3.select(this)
+                .attr("stroke-width", 1.5)
+                .attr("stroke", "black");
+        
+        }
+        
+        // Out function, called on mouseout
+        function out (d, i) {
+            d3.select(this)
+                .attr("stroke", "none");
+        }
+
 ## Step four, compare between two time periods
+
+The scatter plot looks a lot better now, we are just going to develop one last improvement : we would like to be able to change from time period by clicking a simple button.
+
+The first step is naturally to make a new SPARQL query with 2011-2012 instead of 2012-2013. I let you do this part by yourself, it's really easy ;)
+
+Now we will change a little our datasource variable :
+
+        var datasource_2012_2013 = "http://opendatacommunities.org/sparLink";
+        var datasource_2011_2012 = "http://opendatacommunities.org/sparLink2";
+        var nomisData = "http://www.nomiswebLink";
+        
+        var datasource =    [datasource_2011_2012,
+                            datasource_2012_2013
+                            ];
+                            
+        // Used to select the dataset to show                        
+        var ds = datasource.length - 1;
+        
+        // Loading data     
+        d3.csv(datasource[ds], function (data) { ......
+
+Then we add a button :
+
+        <div id="buttons">
+            <button id="change_period">2011-12 / 2012-13</button>
+        </div>
+
+With CSS
+
+        #change_period {
+            position:relative;
+            left: 1000px;
+            top: 40px;
+            width: auto;
+            height: auto;
+            padding: 10px;
+            background-color: rgb(49,130,189);
+            border: 0;
+            text-align: center;
+            font-size: 15px;
+            color: white;
+        }
+
+And finally we want that, when the button is clicked, we update the data with an other dataset, we merge data with NOMIS API data, we adapt the scale and we display a beautiful transition between both datasets. That's why d3.js is really powerful, transitions are as simple as writting "transition()"...
+
+        d3.select("#change_period")
+            .on("click", function() { 
+                
+                if (ds === datasource.length - 1) {
+                    ds = 0;
+                } else {
+                    ds++;
+                }
+                
+                d3.csv(datasource[ds], function (data) {
+
+                    
+                    // Merge dataset with NOMIS dataset
+                    d3.csv(nomisData, function (nomis) {
+                        for (var i = 0; i < data.length; i++) {
+                            // Grab GSS code from ODC dataset
+                            var dataGss = data[i].gssCode;
+
+                            for (var j = 0; j < nomis.length; j++) {
+
+                                var nomisGss = nomis[j].GEOGRAPHY_CODE;
+
+                                if (dataGss == nomisGss) {
+
+                                    // Copy job density value into the ODC csv
+                                    data[i].job = nomis[j].OBS_VALUE;
+                                    break;
+                                } 
+                            }
+                        }
+                        // Scaling
+                        var xScale = d3.scale.log()
+                                                .domain([10, d3.max(data, function (d) {
+                                                                return parseInt(d.starts) ;
+                                                            })
+                                                        ])
+                                                .range([padding, width - padding]);
+                        var yScale = d3.scale.log()
+                                                .domain([10, d3.max(data, function (d) {
+                                                                return parseInt(d.completions) ;
+                                                            })
+                                                        ])
+                                                .range([height - padding, padding]);
+                    
+                                                
+                        // Key function to bind data to element via gsscode
+                        var key = function(d) {
+                            return d.gssCode;
+                        };
+                        // Pass data to svg
+                        svg.selectAll("circle")
+                            .data(data, key)
+                            .transition()                     
+                            .duration(4000)
+                            .attr("cx", function (d) {
+                                if (parseInt(d.starts) === 0) {
+                                    return xScale(5);
+                                } else {
+                                    return xScale(d.starts);
+                                }
+                            })
+                            .attr("cy", function (d) {
+                                if (parseInt(d.completions) === 0) {
+                                    return yScale(5);
+                                } else {
+                                    return yScale(d.completions);
+                                }
+                            })
+                            .attr("r", function (d) {
+                                return (2.5 +  0.8 * Math.sqrt(d.homelessness));
+                            })
+                            .style("fill", function (d) {
+                                return color(d.job);
+                            })
+                            .transition()
+                            .duration(400);
+                    })
+                });
+            });
+            
+Interesting point : we bind data to DOM element via a key function indexed by gsscode, this way you can watch a local authority housing policy "moving on the scatter plot"...
+
+Here's what you should have : 
+
+![screenshot9](./Tutorial/screenshot9.png)
+
 
 ## Conclusion
