@@ -482,11 +482,234 @@ That's not bad but we are going to improve it on third step of this tutorial...
 
 ### Acceptable area
 
-### Color
+The idea here is to display a light gray area on the scatter plot to visualise circles where the number of houses completed during the year is equal to +/- 30% the number of houses started during the year. 
 
-### Circles size
+Be careful, d3 display everything in the same order than the code itself, that's why you have to place this code **before** the code that displays the circles and juste after the scaling.
+
+        // Acceptable values domain
+        svg.append("path")
+            .datum(data)
+            .attr("class", "area")
+            .attr("d", d3.svg.area()
+            .x(function (d) {
+                if (parseInt(d.starts) === 0) {
+                    return xScale(10);
+                } else {
+                    return xScale(d.starts);
+                }
+            })
+            .y0(function (d) {
+                if (parseInt(d.starts) < 10) {
+                    return height - padding;
+                } else {
+                    return yScale(1.3 * d.starts);
+                }
+            })
+            .y1(function (d) {
+                if (parseInt(d.starts) < 10) {
+                    return height - padding;
+                } else {
+                    return yScale(0.7 * d.starts);
+                }
+            }));
+            
+And the CSS :
+
+        .area {
+            fill: rgb(222,235,247);
+        }
+
+### Circles radius
+
+This part is a bit more tricky... because we are going to use SPARQL again. SPARQL is kind of scary at the beginning but you'll get used to it, the learning curve looks like a logarithme..
+
+We would like to visualize [homelessness data](http://opendatacommunities.org/themes/homelessness) as the circles radius :  we just have to change our SPARQL query : 
+
+        PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
+        PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/>
+        PREFIX gov: <http://opendatacommunities.org/def/local-government/>
+        PREFIX osgeo:  <http://data.ordnancesurvey.co.uk/ontology/admingeo/>
+        PREFIX year: <http://reference.data.gov.uk/id/government-year/>
+        PREFIX quarter: <http://reference.data.gov.uk/id/quarter/> // that's new !!
+        PREFIX period: <http://opendatacommunities.org/def/ontology/time/> // that's new !!
+        PREFIX cube: <http://purl.org/linked-data/cube#>
+        PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+        PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+        PREFIX building: <http://opendatacommunities.org/def/ontology/house-building/>
+        PREFIX starts: <http://opendatacommunities.org/def/ontology/house-building/starts/>
+        PREFIX compl: <http://opendatacommunities.org/def/ontology/house-building/completions/>
+        PREFIX homelessness: <http://opendatacommunities.org/def/ontology/homelessness/> // that's new !!
+
+        SELECT ?authorityName ?starts ?completions ?homelessness ?gssCode ?refArea ?observation ?observation2 ?observation3 WHERE {  // that's new !!
+
+           GRAPH <http://opendatacommunities.org/graph/house-building/completions/tenure> { 
+              ?observation rdf:type cube:Observation ;
+                           time:refPeriod year:2012-2013 ; 
+                           geo:refArea ?refArea ; 
+                           compl:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
+                           building:completionsObs ?completions .
+           }
+
+           GRAPH <http://opendatacommunities.org/graph/house-building/starts/tenure> { 
+              ?observation2 rdf:type cube:Observation ;
+                            time:refPeriod year:2012-2013 ; 
+                            starts:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
+                            geo:refArea ?refArea ; 
+                            building:startsObs ?starts .
+           }
+
+            GRAPH <http://opendatacommunities.org/graph/homelessness/households-accommodated-per-1000/temporary-housing-types> {  // that's new !!
+              ?observation3 rdf:type cube:Observation ; // that's new !!
+                           period:refPeriod quarter:2012-Q1 ;  // that's new !!
+                           geo:refArea ?refArea ;  // that's new !!
+                           homelessness:householdsAccommodatedPer1000Obs ?homelessness . // that's new !!
+           } 
+
+           GRAPH <http://opendatacommunities.org/graph/ontology/geography/ons-labels> {
+             ?refArea osgeo:gssCode ?gssCode ; 
+                      gov:isGovernedBy ?authority .
+           }
+
+           GRAPH <http://opendatacommunities.org/graph/local-authorities> { 
+              ?authority rdfs:label ?authorityName .
+           }
+
+        } ORDER BY(?starts)
+
+You can run this query and get your new link to the API, replace the former one on the datasource variable. Now you have an access to homelessness data via a .homelessness so you can modify your code for the circles : 
+
+        .attr("r", function (d) {
+            return (2.5 + 0.8 * Math.sqrt(d.homelessness));
+        })
+
+I use a square root for more visibility.
+
+### Colors
+
+Now that's a funny momment because **we are going to mix Open Data Communities data that we already have with data from the NOMIS API which are UK labour market data !** Indeed we would like the circles color to be function of the job density.
+
+So the idea is to get some new data from the NOMIS API. That's not really easy, [here's some documentation on the NOMIS API utilisation](https://github.com/the-frey/odc_nomis). In my opinion, creating an account and using the query wizard is the best way to do !
+
+![screenshot4](./Tutorial/screenshot4.png)
+![screenshot5](./Tutorial/screenshot5.png)
+![screenshot6](./Tutorial/screenshot6.png)
+
+Here's the link I get at the end : "http://www.nomisweb.co.uk/api/v01/dataset/NM_57_1.data.csv?geography=1946157057...1946157382&date=latest&item=3&measures=20100&select=date_name,geography_name,geography_code,item_name,measures_name,obs_value,obs_status_name"
+
+You can add this link to your document : 
+
+        var nomisData = "http://www.nomiswebAPILink"
+
+Before changing our circles color we are going to merge both dataset : in the first dataset, for each local authority, we are going to add the job density :
+
+        // Merge dataset with NOMIS dataset
+        d3.csv(nomisData, function (nomis) {
+            for (var i = 0; i < data.length; i++) {
+                // Grab GSS code from ODC dataset
+                var dataGss = data[i].gssCode;
+
+                for (var j = 0; j < nomis.length; j++) {
+
+                    var nomisGss = nomis[j].GEOGRAPHY_CODE;
+
+                    if (dataGss == nomisGss) {
+
+                        // Copy job density value into the ODC csv
+                        data[i].job = nomis[j].OBS_VALUE;
+                        break;
+                    } 
+                }
+            }
+            // Pass data to svg....
+            });
+            
+Then we can add a color function with a logarithmic scale that will colorize our circles : 
+
+        // Color - jobs density data
+        var color = d3.scale.log()
+                .domain([0.2, 2])
+                .range(['rgb(240,59,32)','rgb(255,237,160)']);
+                
+The domain represent the data we are colorizing (most of jobs density is between 0.2 and 2). The range represent the colors we are going to use : you can find nice range of colors on [ColorBrewer2](http://colorbrewer2.org).
+
+And now you can change circles color : 
+
+	    .style("fill", function (d) {
+	        return color(d.job);
+	    })
+
+![screenshot7](./Tutorial/screenshot7.png)
+Pretty awesome no ?! Next step is to explain people who watch your scatter plot what are they watching...
 
 ### Legend
+
+With everything you've learnt, displaying a legend should be easy now. Difficults parts are positionning legends and display a color gradient.
+
+        // Legend area
+        svg.append("rect")
+            .attr("x", width - 58)
+            .attr("y", height - padding - 43)
+            .attr("width", 18)
+            .attr("height", 18)
+            .style("fill", "rgb(222,235,247)");
+
+        svg.append("text")
+            .attr("class", "label")
+            .attr("x", width - 60)
+            .attr("y", height - padding - 35)
+            .attr("dy", ".35em")
+            .style("text-anchor", "end")
+            .text("completed = +/- 30% started");
+            
+        // Legend circles 
+        svg.append("rect")
+            .attr("class", "legend")
+            .attr("x", width - 155)
+            .attr("y", height - padding - 80)
+            .attr("width", 110)
+            .attr("height", 10)
+            .style("fill", "url(#gradient)");
+            
+        svg.append("linearGradient")
+            .attr("id", "gradient")
+            .attr("x1", "0%")
+            .attr("y1", "0%")
+            .attr("x2", "100%")
+            .attr("y2", "0%")
+           .selectAll("stop")
+            .data([
+                {offset: "0%", color: color.range()[0]},
+                {offset: "100%", color: color.range()[1]}
+            ])
+           .enter().append("stop")
+            .attr("offset", function(d) { return d.offset; })
+            .attr("stop-color", function(d) { return d.color; });   
+        
+        svg.append("text")
+            .attr("class", "label")
+            .attr("x", width - 40)
+            .attr("y", height - padding - 60)
+            .attr("dy", ".35em")
+            .style("text-anchor", "end")
+            .text("> " + color.domain()[1]);
+        
+        svg.append("text")
+            .attr("class", "label")
+            .attr("x", width - 135)
+            .attr("y", height - padding - 60)
+            .attr("dy", ".35em")
+            .style("text-anchor", "end")
+            .text(color.domain()[0] + " <");
+        
+        svg.append("text")
+            .attr("class", "label")
+            .attr("x", width - 70)
+            .attr("y", height - padding - 90)
+            .attr("dy", ".35em")
+            .style("text-anchor", "end")
+            .text("Jobs density");
+            
+![screenshot8](./Tutorial/screenshot8.png)
 
 ## Step four, compare between two time periods
 
