@@ -11,7 +11,7 @@ I had some existing knowledge of web development but I was almost a newbie. Cons
 
 ## Step one, what is 'linked data' anyway?
 
-To start we are going to get some data; this is probably the most difficult part of the tutorial. Nobody is naturally used to [the RDF semantic web standard](http://en.wikipedia.org/wiki/Resource_Description_Framework)! You probably
+To start we are going to get some data; this is probably the most difficult part of the tutorial. Nobody is naturally used to [the RDF linked data standard](http://en.wikipedia.org/wiki/Resource_Description_Framework)! You probably
 know how to use an Excel spreadsheet, a CSV file or a SQL database, but RDF is, let's say a little different to these... To understand why this data is 'linked', try to imagine what the internet looked like before the link was invented:
 a 'poor' list of resources. Links between resources have given the internet a lot of its significance; just as the internet can be described as a [graph](https://en.wikipedia.org/wiki/Webgraph), so it is with linked data. The concept as related to linked data is exactly the same; you have a huge amount of data with links between data points.
 
