@@ -11,7 +11,7 @@ I had some existing knowledge of web development but I was almost a newbie. Cons
 
 ## Step one, what is 'linked data' anyway?
 
-To start we are going to get some data; this is probably the most difficult part of the tutorial. Nobody is naturally used to [the RDF semantic web standard](http://en.wikipedia.org/wiki/Resource_Description_Framework)! You probably
+To start we are going to get some data; this is probably the most difficult part of the tutorial. Nobody is naturally used to [the RDF linked data standard](http://en.wikipedia.org/wiki/Resource_Description_Framework)! You probably
 know how to use an Excel spreadsheet, a CSV file or a SQL database, but RDF is, let's say a little different to these... To understand why this data is 'linked', try to imagine what the internet looked like before the link was invented:
 a 'poor' list of resources. Links between resources have given the internet a lot of its significance; just as the internet can be described as a [graph](https://en.wikipedia.org/wiki/Webgraph), so it is with linked data. The concept as related to linked data is exactly the same; you have a huge amount of data with links between data points.
 
@@ -29,7 +29,7 @@ The scatter plot we are going to make will compare the number of houses started 
 
 The X axis will be houses started and the Y axis will be houses completed. Later on in the tutorial we will add labour market data and homelessness data so the scatter plot can help you understand the housing policy of each local authority.
 
-### SPARQL query I
+### SPARQL query #1
 
 So let's get that data! The main query language for querying RDF data is SPARQL. There are [some pretty good tutorials about SPARQL](https://jena.apache.org/tutorials/sparql.html); here I just want to show you how it works and how to understand the logic behind it. RDF data is expressed with triples in the form: subject, predicate (the link between two resources) and object. Data in this format can be thought of as like sentences: "The sky" (subject) "has" (predicate) "the color blue" (object). 
 A SPARQL query looks like this : 
@@ -47,7 +47,7 @@ You recognize the triple and we can make it more readable, using PREFIX :
             ?x  w3:FN  "John Smith" 
         }
 
-### SPARQL query II
+### SPARQL query #2
 
 By [exploring the data](http://opendatacommunities.org/data/house-building/completions/tenure/2013-2014/E06000008/all), you can start to see how data is organised and how it is linked together. The main information here (that is going to be our Y axis) is the 'Completions'; by clicking on Completions we can see that Completions is an Observation. Returning to the data, we also see that we can choose a `referencePeriod` and a `referenceArea`.
 
@@ -105,15 +105,19 @@ It's a first good step but you still have to explain what a `refArea` is.
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#> // that's new!
         PREFIX building: <http://opendatacommunities.org/def/ontology/house-building/>
         PREFIX compl: <http://opendatacommunities.org/def/ontology/house-building/completions/> 
+        
         SELECT * WHERE {
-        ?observation rdf:type cube:Observation ;
-                   time:refPeriod year:2012-2013 ; 
-                   geo:refArea ?refArea ;
-                   compl:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
-                   building:completionsObs ?completions .   
-        ?refArea osgeo:gssCode ?gssCode ;  // that's new!
-                gov:isGovernedBy ?authority . // that's new!
-        ?authority rdfs:label ?authorityName . // that's new!
+          
+          ?observation rdf:type cube:Observation ;
+                     time:refPeriod year:2012-2013 ; 
+                     geo:refArea ?refArea ;
+                     compl:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
+                     building:completionsObs ?completions .   
+          
+          ?refArea osgeo:gssCode ?gssCode ;  // that's new!
+                     gov:isGovernedBy ?authority . // that's new!
+          
+          ?authority rdfs:label ?authorityName . // that's new!
         }
         
 Now you are saying: "What we would like to know is an observation, concerning the time period 2012-2013, a variable of which is the `refArea` and which concerns what we will call completions. The `refArea` would be the GSS code; each `refArea` is governed by an authority and we need the name of that authority as well!"
@@ -132,15 +136,18 @@ First we will select exactly the information we need by replacing that `*`:
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX building: <http://opendatacommunities.org/def/ontology/house-building/>
         PREFIX compl: <http://opendatacommunities.org/def/ontology/house-building/completions/> 
+        
         SELECT ?refArea ?observation ?gssCode ?authorityName ?completions WHERE { // that's new!
-        ?observation rdf:type cube:Observation ;
-                   time:refPeriod year:2012-2013 ; 
-                   geo:refArea ?refArea ;
-                   compl:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
-                   building:completionsObs ?completions .   
-        ?refArea osgeo:gssCode ?gssCode ; 
-                gov:isGovernedBy ?authority .
-        ?authority rdfs:label ?authorityName .
+          ?observation rdf:type cube:Observation ;
+                       time:refPeriod year:2012-2013 ; 
+                       geo:refArea ?refArea ;
+                       compl:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
+                       building:completionsObs ?completions .   
+         
+          ?refArea osgeo:gssCode ?gssCode ; 
+                       gov:isGovernedBy ?authority .
+                       
+          ?authority rdfs:label ?authorityName .
         }
         
 Now recall that we want a scatter plot with both  [completed](http://opendatacommunities.org/data/house-building/completions/tenure) and  [started](http://opendatacommunities.org/data/house-building/starts/tenure) housing data represented. We are going to combine everything in the same query by way of a second observation:
@@ -155,20 +162,25 @@ Now recall that we want a scatter plot with both  [completed](http://opendatacom
         PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
         PREFIX building: <http://opendatacommunities.org/def/ontology/house-building/>
         PREFIX compl: <http://opendatacommunities.org/def/ontology/house-building/completions/> 
+        
         SELECT ?refArea ?observation ?gssCode ?authorityName ?completions ?starts ?observation2 WHERE { // that's new!
-        ?observation rdf:type cube:Observation ;
-                   time:refPeriod year:2012-2013 ; 
-                   geo:refArea ?refArea ;
-                   compl:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
-                   building:completionsObs ?completions .   
-        ?observation2 rdf:type cube:Observation ; // that's new!
-                      time:refPeriod year:2012-2013 ;  // that's new!
-                      starts:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ; // that's new!
-                      geo:refArea ?refArea ;  // that's new!
-                      building:startsObs ?starts . // that's new!
-        ?refArea osgeo:gssCode ?gssCode ; 
-                gov:isGovernedBy ?authority .
-        ?authority rdfs:label ?authorityName .
+        
+          ?observation rdf:type cube:Observation ;
+                       time:refPeriod year:2012-2013 ; 
+                       geo:refArea ?refArea ;
+                       compl:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
+                       building:completionsObs ?completions .   
+                       
+          ?observation2 rdf:type cube:Observation ; // that's new!
+                        time:refPeriod year:2012-2013 ;  // that's new!
+                        starts:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ; // that's new!
+                        geo:refArea ?refArea ;  // that's new!
+                        building:startsObs ?starts . // that's new!
+                        
+          ?refArea osgeo:gssCode ?gssCode ; 
+                   gov:isGovernedBy ?authority .
+        
+          ?authority rdfs:label ?authorityName .
         }
         
 Almost there! Two last things are important to note: first we will order our data by number of started houses (our X axis). Second, that SPARQL will allow us **to focus the query** on certain graphs to be more efficient. Finally, our query is: 
@@ -184,28 +196,34 @@ Almost there! Two last things are important to note: first we will order our dat
         PREFIX building: <http://opendatacommunities.org/def/ontology/house-building/>
         PREFIX starts: <http://opendatacommunities.org/def/ontology/house-building/starts/>
         PREFIX compl: <http://opendatacommunities.org/def/ontology/house-building/completions/>
+        
         SELECT ?refArea ?observation ?gssCode ?authorityName ?completions ?starts ?observation2 WHERE { 
+        
             GRAPH <http://opendatacommunities.org/graph/house-building/completions/tenure> { // that's new!
                 ?observation rdf:type cube:Observation ;
                    time:refPeriod year:2012-2013 ; 
                    geo:refArea ?refArea ; 
                    compl:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
                    building:completionsObs ?completions .
-               }
+            }
+        
             GRAPH <http://opendatacommunities.org/graph/house-building/starts/tenure> { // that's new!
                 ?observation2 rdf:type cube:Observation ;
                     time:refPeriod year:2012-2013 ; 
                     starts:tenure <http://opendatacommunities.org/def/concept/general-concepts/tenure/all> ;
                     geo:refArea ?refArea ; 
                     building:startsObs ?starts .
-                }
+            }
+        
             GRAPH <http://opendatacommunities.org/graph/ontology/geography/ons-labels> { // that's new!
                 ?refArea osgeo:gssCode ?gssCode ; 
                       gov:isGovernedBy ?authority .
-                }
+            }
+        
             GRAPH <http://opendatacommunities.org/graph/local-authorities> { // that's new!
                 ?authority rdfs:label ?authorityName .
-                }
+            }
+            
         } ORDER BY(?starts) // that's new!
         
 Here we are! I hope you feel suitably proud, because you just wrote your first SPARQL query! [How about giving it a whirl?](http://opendatacommunities.org/sparql?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0A%0D%0ASELECT+%3FrefArea+%3Fobservation+%3FgssCode+%3FauthorityName+%3Fcompletions+%3Fstarts+%3Fobservation2+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fcompletions%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++compl%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A+++++++++++++++++++building%3AcompletionsObs+%3Fcompletions+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fstarts%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A++++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A++++++++++++++++++++starts%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A++++++++++++++++++++building%3AstartsObs+%3Fstarts+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fstarts%29)
@@ -269,7 +287,8 @@ Now we can load the data with d3:
             d3.csv(datasource, function (data) {
             // the code for the next steps will go here
             })
-At this step you should start a server using your terminal on the root directory of the `index.html` file. These instructions hold true for OSX and Linux. For Windows, you will need to install Python, but if you're going to that hassle then frankly you might as well [get a more suitable OS for free](http://www.ubuntu.com/download/desktop) for all the data visualization you're about to get addicted to doing. 
+
+At this step you should start a server using your terminal on the root directory of the `index.html` file. These instructions hold true for OSX and Linux. For Windows, you will need to install Python or install a development server such as [mongoose](https://code.google.com/p/mongoose/), but if you're going to that hassle then frankly you might as well [get a more suitable OS for free](http://www.ubuntu.com/download/desktop) for all the data visualization you're about to get addicted to doing. 
 
         $ python -m SimpleHTTPServer 8080
 
