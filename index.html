@@ -24,7 +24,7 @@
         }
         #change_period {
             position:relative;
-            left: 1000px;
+            left: 1025px;
             top: 40px;
             width: auto;
             height: auto;
@@ -34,6 +34,27 @@
             text-align: center;
             font-size: 15px;
             color: white;
+        }
+        .dataset {
+            position:absolute;
+            top: 50px;
+            left: 1000px;
+            width: 230px;
+            height: 200px;
+            padding: 10px;
+            background-color: rgb(49,130,189);
+            border: 0;
+            text-align: center;
+            font-size: 15px;
+            color: white;
+        }
+        #house_building {
+        }
+        #house_prices {
+            top: 275px;
+        }
+        #energy_efficiency {
+            top: 500px;
         }
         #tooltip {
             position: absolute;
@@ -72,8 +93,20 @@
 </head>
 
 <body>
-    <div id="buttons">
-            <button id="change_period">2011-12 / 2012-13</button>
+    <div id="datasets">
+        <button class="dataset" id="house_building">
+            <h2>House building</h2>
+            <p>Comparison between the number of houses completed and started by district</p>
+        </button>
+        </br>
+        <button class="dataset" id="house_prices">
+            <h2>House prices</h2>
+            <p>Evolution of the ratio median house price to median earnings by district</p>
+        </button>
+        <button class="dataset" id="energy_efficiency">
+            <h2>Energy efficiency</h2>
+            <p>Evolution of domestic Energy Performance Certificates Lodged on Register - By Floor Area</p>
+        </button>
     </div>
     
     <div id="tooltip" class="hidden">
