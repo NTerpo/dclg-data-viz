@@ -1,0 +1,53 @@
+PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
+PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/>
+PREFIX gov: <http://opendatacommunities.org/def/local-government/>
+PREFIX osgeo:  <http://data.ordnancesurvey.co.uk/ontology/admingeo/>
+PREFIX yr: <http://reference.data.gov.uk/id/year/>
+PREFIX year: <http://reference.data.gov.uk/id/government-year/>
+PREFIX quarter: <http://reference.data.gov.uk/id/quarter/>
+PREFIX period: <http://opendatacommunities.org/def/ontology/time/>
+PREFIX cube: <http://purl.org/linked-data/cube#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX building: <http://opendatacommunities.org/def/ontology/house-building/>
+PREFIX starts: <http://opendatacommunities.org/def/ontology/house-building/starts/>
+PREFIX compl: <http://opendatacommunities.org/def/ontology/house-building/completions/>
+PREFIX stock: <http://opendatacommunities.org/def/ontology/housing-market/dwelling-stock/>
+PREFIX market: <http://opendatacommunities.org/def/ontology/housing-market/>
+PREFIX energy: <http://opendatacommunities.org/def/ontology/building-standards-and-sustainability/energy-efficiency-and-performance/domestic/>
+
+SELECT ?authorityName ?energyCertificate2013Q1 ?energyCertificate2014Q1 ?dwellingStock ?gssCode ?refArea ?observation ?observation2 ?observation3 WHERE { 
+
+   GRAPH <http://opendatacommunities.org/graph/building-standards-and-sustainability/energy-efficiency-and-performance/domestic/certificates-lodged-by-area/area/total> { 
+      ?observation rdf:type cube:Observation ;
+                   time:refPeriod quarter:2013-Q1 ; 
+                   geo:refArea ?refArea ; 
+                   energy:certificatesLodgedByAreaObs ?energyCertificate2013Q1 .
+   }
+
+   GRAPH <http://opendatacommunities.org/graph/building-standards-and-sustainability/energy-efficiency-and-performance/domestic/certificates-lodged-by-area/area/total> { 
+      ?observation rdf:type cube:Observation ;
+                   time:refPeriod quarter:2014-Q1 ; 
+                   geo:refArea ?refArea ; 
+                   energy:certificatesLodgedByAreaObs ?energyCertificate2014Q1 .
+   }
+
+    GRAPH <http://opendatacommunities.org/graph/housing-market/dwelling-stock/tenure> { 
+      ?observation3 rdf:type cube:Observation ;
+                   period:refPeriod yr:2012 ; 
+                   geo:refArea ?refArea ; 
+                   stock:tenure <http://opendatacommunities.org/def/concept/housing-market/dwelling-stock/tenure/total> ;
+                   market:dwellingStockObs ?dwellingStock .
+   }
+
+   GRAPH <http://opendatacommunities.org/graph/ontology/geography/ons-labels> {
+     ?refArea osgeo:gssCode ?gssCode ; 
+              gov:isGovernedBy ?authority .
+   }
+
+   GRAPH <http://opendatacommunities.org/graph/local-authorities> { 
+      ?authority rdfs:label ?authorityName .
+   }
+
+} ORDER BY(?energyCertificate2014Q1)
+

@@ -215,7 +215,7 @@
                         }
                     })
                     .attr("r", function (d) {
-                        return (2.5 + 0.8 * Math.sqrt(d.homelessness));
+                        return (2.5 + 0.005 * Math.sqrt(d.dwellingStock));
                     })
 				    .style("fill", function (d) {
 				        return color(d.job);
@@ -258,7 +258,7 @@
                                     '</br>' + 
 
                                     '<span>' +
-                                    "Numbers of households accommodated by local authorities per 1000 households " 
+                                    "Dwelling Stock " 
                                     + (d.observation3).split("/")[7] + " : " + 
                                     '</span>' +
 
