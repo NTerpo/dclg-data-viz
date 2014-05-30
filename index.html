@@ -469,15 +469,11 @@
                         }
                         // Update scale domain
                         var xScale = d3.scale.log()
-                                                .domain([2, d3.max(data, function (d) {
-                                                                return parseFloat(d.ratioPriceEarnings2012) ;
-                                                            })
+                                                .domain([2.7, 10
                                                         ])
                                                 .range([padding, width - padding]);
                         var yScale = d3.scale.log()
-                                                .domain([2, d3.max(data, function (d) {
-                                                        return parseFloat(d.ratioPriceEarnings2011) ;
-                                                    })
+                                                .domain([2.7, 10
                                                 ])
                                                 .range([height - padding, padding]);
                         // Updte axis
@@ -525,7 +521,208 @@
                                 }
                             })
                             .attr("r", function (d) {
-                                return (0.5 + 0.008 * Math.sqrt(d.dwellingStock));
+                                return (2.5 + 0.008 * Math.sqrt(d.dwellingStock));
+                            })
+                            .style("fill", function (d) {
+                                return color(d.job);
+                            })
+                            .transition()
+                            .duration(400);
+                
+                
+                    })
+                });
+            }
+        );
+        
+        // When clicking on the Energy efficiency's button 
+        d3.select("#energy_efficiency")
+            .on("click", function () {
+                ds = 2;
+    
+                d3.csv(datasource[ds], function (data) {
+
+        
+                    // Merge dataset with NOMIS dataset
+                    d3.csv(nomisData, function (nomis) {
+                        for (var i = 0; i < data.length; i++) {
+                            // Grab GSS code from ODC dataset
+                            var dataGss = data[i].gssCode;
+
+                            for (var j = 0; j < nomis.length; j++) {
+
+                                var nomisGss = nomis[j].GEOGRAPHY_CODE;
+
+                                if (dataGss == nomisGss) {
+                                    // Select the data
+                                    if (nomis[j].MEASURES_NAME == "Variable") {
+                                        // Copy job density value into the ODC csv
+                                        data[i].job = nomis[j].OBS_VALUE;
+                                        break;
+                                    }
+                                } 
+                            }
+                        }
+                        // Update scale domain
+                        var xScale = d3.scale.log()
+                                                .domain([20000, d3.max(data, function (d) {
+                                                        return parseInt(d.energyCertificate2014Q1) ;
+                                                    })
+                                                ])
+                                                .range([padding, width - padding]);
+                        var yScale = d3.scale.log()
+                                                .domain([20000, d3.max(data, function (d) {
+                                                        return parseInt(d.energyCertificate2013Q1) ;
+                                                    })
+                                                ])
+                                                .range([height - padding, padding]);
+                        // Updte axis
+                        svg.select(".x.axis")
+                            .transition()
+                            .duration(1000)
+                            .call(d3.svg.axis()
+                                        .scale(xScale)
+                                        .orient("bottom")
+                                        .ticks(5, function(d, i) {
+                                            return formatSi(d);
+                                        }));
+
+                        svg.select(".y.axis")
+                            .transition()
+                            .duration(1000)
+                            .call(d3.svg.axis()
+                    .scale(yScale)
+                    .orient("left")
+                    .ticks(5, function(d, i) {
+                        return formatSi(d);
+                    }));
+                                    
+                        // Key function to bind data to element via gsscode
+                        var key = function(d) {
+                            return d.gssCode;
+                        };
+                        // Pass data to svg
+                        svg.selectAll("circle")
+                            .data(data, key)
+                            .transition()                     
+                            .duration(1000)
+                            .attr("cx", function (d) {
+                                if (parseInt(d.starts) === 0) {
+                                    return xScale(2);
+                                } else {
+                                    return xScale(d.energyCertificate2014Q1);
+                                }
+                            })
+                            .attr("cy", function (d) {
+                                if (parseInt(d.completions) === 0) {
+                                    return yScale(2);
+                                } else {
+                                    return yScale(d.energyCertificate2013Q1);
+                                }
+                            })
+                            .attr("r", function (d) {
+                                return (2.5 + 0.008 * Math.sqrt(d.dwellingStock));
+                            })
+                            .style("fill", function (d) {
+                                return color(d.job);
+                            })
+                            .transition()
+                            .duration(400);
+                
+                
+                    })
+                });
+            }
+        );
+        
+        // When clicking on the House buildings' button 
+        d3.select("#house_building")
+            .on("click", function () {
+                ds = 0;
+    
+                d3.csv(datasource[ds], function (data) {
+
+        
+                    // Merge dataset with NOMIS dataset
+                    d3.csv(nomisData, function (nomis) {
+                        for (var i = 0; i < data.length; i++) {
+                            // Grab GSS code from ODC dataset
+                            var dataGss = data[i].gssCode;
+
+                            for (var j = 0; j < nomis.length; j++) {
+
+                                var nomisGss = nomis[j].GEOGRAPHY_CODE;
+
+                                if (dataGss == nomisGss) {
+                                    // Select the data
+                                    if (nomis[j].MEASURES_NAME == "Variable") {
+                                        // Copy job density value into the ODC csv
+                                        data[i].job = nomis[j].OBS_VALUE;
+                                        break;
+                                    }
+                                } 
+                            }
+                        }
+                        // Update scale domain
+                        var xScale = d3.scale.log()
+                                                .domain([10, d3.max(data, function (d) {
+                                                                return parseInt(d.starts) ;
+                                                            })
+                                                        ])
+                                                .range([padding, width - padding]);
+                        var yScale = d3.scale.log()
+                                                .domain([10, d3.max(data, function (d) {
+                                                                return parseInt(d.completions) ;
+                                                            })
+                                                        ])
+                                                .range([height - padding, padding]);
+                                                
+                        // Updte axis
+                        svg.select(".x.axis")
+                            .transition()
+                            .duration(1000)
+                            .call(d3.svg.axis()
+                                        .scale(xScale)
+                                        .orient("bottom")
+                                        .ticks(5, function(d, i) {
+                                            return formatSi(d);
+                                        }));
+
+                        svg.select(".y.axis")
+                            .transition()
+                            .duration(1000)
+                            .call(d3.svg.axis()
+                    .scale(yScale)
+                    .orient("left")
+                    .ticks(5, function(d, i) {
+                        return formatSi(d);
+                    }));
+                                    
+                        // Key function to bind data to element via gsscode
+                        var key = function(d) {
+                            return d.gssCode;
+                        };
+                        // Pass data to svg
+                        svg.selectAll("circle")
+                            .data(data, key)
+                            .transition()                     
+                            .duration(1000)
+                            .attr("cx", function (d) {
+                                if (parseInt(d.starts) === 0) {
+                                    return xScale(2);
+                                } else {
+                                    return xScale(d.starts);
+                                }
+                            })
+                            .attr("cy", function (d) {
+                                if (parseInt(d.completions) === 0) {
+                                    return yScale(2);
+                                } else {
+                                    return yScale(d.completions);
+                                }
+                            })
+                            .attr("r", function (d) {
+                                return (2.5 + 0.008 * Math.sqrt(d.dwellingStock));
                             })
                             .style("fill", function (d) {
                                 return color(d.job);
