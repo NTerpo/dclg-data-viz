@@ -205,7 +205,8 @@
                         } else {
                             return yScale(0.7 * d.starts);
                         }
-                    })); 
+                    })
+                ); 
 
             // Merge dataset with NOMIS dataset
             d3.csv(nomisData, function (nomis) {
@@ -500,7 +501,7 @@
                             .text("Ratio Prices / Earnings 2012");
                         svg.select("#yAxisLabel")
                             .text("Ratio Prices / Earnings 2011"); 
-               
+
                         // Key function to bind data to element via gsscode
                         var key = function(d) {
                             return d.gssCode;
