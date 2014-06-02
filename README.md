@@ -4,7 +4,7 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 
 ## Demo
 
-[Demo](http://jsfiddle.net/nicolasterpolilli/7ed26/5/embedded/result/)
+[Demo](http://jsfiddle.net/nicolasterpolilli/up4vW/3/embedded/result/)
 
 * X axis = Permanent dwellings started, 2011-12 / 2012-13 
 * Y axis = Permanent dwellings completed, 2011-12 / 2012-13 
@@ -14,11 +14,9 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 * Tooltip onclick with links to ressources URI
 * Logarithmic scale
 
-[Demo working version - 3 visualizations + selection](http://jsfiddle.net/nicolasterpolilli/up4vW/3/embedded/result/)
-
 ## Informations
 
-* SPARQL query to get data from 2 datasets via Open Data Communities API :
+* SPARQL query to get data from datasets via Open Data Communities API :
     * [Permanent dwellings started, 2009/10 to 2012/13, England, District By Tenure](http://opendatacommunities.org/data/house-building/starts/tenure)
     * [Permanent dwellings completed, 2009/10 to 2012/13, England, District By Tenure](http://opendatacommunities.org/data/house-building/completions/tenure)
     * [Households in temporary accommodation per 1000 households, 2011 Q2 to 2013 Q4, England, District](http://opendatacommunities.org/data/homelessness/households-accommodated-per-1000/temporary-housing-types)
@@ -27,7 +25,3 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
     * [Help to use NOMIS API](https://github.com/the-frey/odc_nomis)
 * d3.js for visualization
 * [ColorBrewer2](http://colorbrewer2.org)
-
-## Improve ?
-
-* ODC API query ~ 100ms / NOMIS API query ~ 400ms  

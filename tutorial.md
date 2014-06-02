@@ -7,7 +7,7 @@ I had some existing knowledge of web development but I was almost a newbie. Cons
 * Query an API
 * Visualize data on a scatter plot using [d3.js](http://d3js.org)
 
-[You can access the code on GitHub](https://github.com/NTerpo/DCLG_data_visualization) and [here is the demo of what we are going to do](http://jsfiddle.net/nicolasterpolilli/7ed26/5/embedded/result/).
+[You can access the code on GitHub](https://github.com/NTerpo/DCLG_data_visualization/blob/master/tutorial.html) and [here is the demo of what we are going to do](http://jsfiddle.net/nicolasterpolilli/7ed26/5/embedded/result/).
 
 ## Step one, what is 'linked data' anyway?
 
