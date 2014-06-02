@@ -345,10 +345,11 @@
                     }))
                    .append("text")
                     .attr("class", "label")
+                    .attr("id", "xAxisLabel")
                     .attr("x", width - padding)
                     .attr("y", -6)
                     .style("text-anchor", "end")
-                    .text("started building house");
+                    .text("Started building house 2012-13");
 
                 svg.append("g")
                     .attr("class", "y axis") 
@@ -361,12 +362,13 @@
                     }))
                    .append("text")
                     .attr("class", "label")
+                    .attr("id", "yAxisLabel")
                     .attr("transform", "rotate(-90)")
                     .attr("x", - padding)
                     .attr("y", 6)
                     .attr("dy", ".71em")
                     .style("text-anchor", "end")
-                    .text("completed building house");
+                    .text("Completed building house 2012-13");
 
                 // Legend area
                 svg.append("rect")
@@ -493,7 +495,12 @@
                                             return formatSi(d);
                                         })
                             );
-                                    
+                            
+                        svg.select("#xAxisLabel")
+                            .text("Ratio Prices / Earnings 2012");
+                        svg.select("#yAxisLabel")
+                            .text("Ratio Prices / Earnings 2011"); 
+               
                         // Key function to bind data to element via gsscode
                         var key = function(d) {
                             return d.gssCode;
@@ -637,26 +644,34 @@
                             .transition()
                             .duration(1000)
                             .call(d3.svg.axis()
-                                        .scale(xScale)
-                                        .orient("bottom")
-                                        .ticks(5, function(d, i) {
-                                            return formatSi(d);
-                                        }));
+                                .scale(xScale)
+                                .orient("bottom")
+                                .ticks(5, function(d, i) {
+                                    return formatSi(d);
+                                })
+                            );
 
                         svg.select(".y.axis")
                             .transition()
                             .duration(1000)
                             .call(d3.svg.axis()
-                    .scale(yScale)
-                    .orient("left")
-                    .ticks(5, function(d, i) {
-                        return formatSi(d);
-                    }));
-                                    
+                                .scale(yScale)
+                                .orient("left")
+                                .ticks(5, function(d, i) {
+                                    return formatSi(d);
+                                })
+                            );
+
+                        svg.select("#xAxisLabel")
+                            .text("Energy Certificate 2014-Q1");
+                        svg.select("#yAxisLabel")
+                            .text("Energy Certificate 2013-Q1");
+
                         // Key function to bind data to element via gsscode
                         var key = function(d) {
                             return d.gssCode;
                         };
+                        
                         // Pass data to svg
                         svg.selectAll("circle")
                             .data(data, key)
@@ -748,8 +763,7 @@
                             });                
                     })
                 });
-            }
-        );
+            });
 
         // When clicking on the House buildings' button 
         d3.select("#house_building")
@@ -779,6 +793,7 @@
                                 } 
                             }
                         }
+                        
                         // Update scale domain
                         var xScale = d3.scale.log()
                                                 .domain([10, d3.max(data, function (d) {
@@ -798,26 +813,33 @@
                             .transition()
                             .duration(1000)
                             .call(d3.svg.axis()
-                                        .scale(xScale)
-                                        .orient("bottom")
-                                        .ticks(5, function(d, i) {
-                                            return formatSi(d);
-                                        }));
+                                .scale(xScale)
+                                .orient("bottom")
+                                .ticks(5, function(d, i) {
+                                    return formatSi(d);
+                                }));
 
                         svg.select(".y.axis")
                             .transition()
                             .duration(1000)
                             .call(d3.svg.axis()
-                    .scale(yScale)
-                    .orient("left")
-                    .ticks(5, function(d, i) {
-                        return formatSi(d);
-                    }));
+                                .scale(yScale)
+                                .orient("left")
+                                .ticks(5, function(d, i) {
+                                    return formatSi(d);
+                                })
+                            );
+                        
+                        svg.select("#xAxisLabel")
+                            .text("Started building house 2012-13");
+                        svg.select("#yAxisLabel")
+                            .text("Completed building house 2012-13");
                                     
                         // Key function to bind data to element via gsscode
                         var key = function(d) {
                             return d.gssCode;
                         };
+                        
                         // Pass data to svg
                         svg.selectAll("circle")
                             .data(data, key)
@@ -870,35 +892,35 @@
                                         .style("top", yPosition + "px")
                                         .html(
                                             '<h3>' + '<a href = "' + d.refArea + '" target="_blank">' + d.authorityName + '</a>' + 
-                                                                                '</h3>' + 
+                                            '</h3>' + 
 
-                                                                                '<span>' + 
-                                                                                "Completed house building " + (d.observation).split("/")[7] + " : " + 
-                                                                                '</span>' +
+                                            '<span>' + 
+                                            "Completed house building " + (d.observation).split("/")[7] + " : " + 
+                                            '</span>' +
 
-                                                                                '<a href = "' + d.observation + '" target="_blank">' + d.completions + '</a>' + 
-                                                                                '</br>' +
+                                            '<a href = "' + d.observation + '" target="_blank">' + d.completions + '</a>' + 
+                                            '</br>' +
 
-                                                                                '<span>' +
-                                                                                "Started house building " + (d.observation).split("/")[7] + " : " +  
-                                                                                '</span>' +
+                                            '<span>' +
+                                            "Started house building " + (d.observation).split("/")[7] + " : " +  
+                                            '</span>' +
 
-                                                                                '<a href = "' + d.observation2 + '" target="_blank">' + d.starts + '</a>' + 
-                                                                                '</br>' + 
+                                            '<a href = "' + d.observation2 + '" target="_blank">' + d.starts + '</a>' + 
+                                            '</br>' + 
 
-                                                                                '<span>' +
-                                                                                "Dwelling Stock " 
-                                                                                + (d.observation3).split("/")[7] + " : " + 
-                                                                                '</span>' +
+                                            '<span>' +
+                                            "Dwelling Stock " 
+                                            + (d.observation3).split("/")[7] + " : " + 
+                                            '</span>' +
 
-                                                                                '<a href = "' + d.observation3 + '" target="_blank">' + d.dwellingStock + '</a>' + 
-                                                                                '</br>' + 
+                                            '<a href = "' + d.observation3 + '" target="_blank">' + d.dwellingStock + '</a>' + 
+                                            '</br>' + 
 
-                                                                                '<span>' +
-                                                                                    "Employment rate: " + 
-                                                                                '</span>' +
+                                            '<span>' +
+                                            "Employment rate: " + 
+                                            '</span>' +
 
-                                                                                d.job
+                                            d.job
                                         );
 
                                     // Show the tooltip
@@ -911,8 +933,7 @@
                 
                     })
                 });
-            }
-        );
+            });
     </script>
 </body>
 </html>
