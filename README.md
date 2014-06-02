@@ -14,7 +14,7 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 * Tooltip onclick with links to ressources URI
 * Logarithmic scale
 
-[Demo working version - 3 visualizations + selection](http://jsfiddle.net/nicolasterpolilli/up4vW/1/embedded/result/)
+[Demo working version - 3 visualizations + selection](http://jsfiddle.net/nicolasterpolilli/up4vW/2/embedded/result/)
 
 ## Informations
 
