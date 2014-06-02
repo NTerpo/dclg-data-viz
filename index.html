@@ -5,13 +5,33 @@
     <title>Housing in England</title>
 
     <style>
-        .axis path,
-        .axis line {
+        h1 {
+            font-size: 32px;
+              font-family:Arial, Helvetica, sans-serif;
+              color: ;
+              padding:16px;
+              font-weight:lighter;
+              text-align:center;
+              display:block;
+              margin:16px;
+        }
+        .x.axis path,
+        .x.axis line {
             fill: none;
             stroke: black;
             shape-rendering: crispEdges;
         }
-        .axis text {
+        .x.axis text {
+            font-family: sans-serif;
+            font-size: 10px;
+        }
+        .y.axis path,
+        .y.axis line {
+            fill: none;
+            stroke: black;
+            shape-rendering: crispEdges;
+        }
+        .y.axis text {
             font-family: sans-serif;
             font-size: 10px;
         }
@@ -22,18 +42,33 @@
             font-family: sans-serif;
             font-size: 10px;
         }
-        #change_period {
-            position:relative;
+        .dataset {
+            position:absolute;
+            top: 125px;
             left: 1000px;
-            top: 40px;
-            width: auto;
-            height: auto;
+            width: 230px;
+            height: 200px;
             padding: 10px;
             background-color: rgb(49,130,189);
             border: 0;
             text-align: center;
             font-size: 15px;
             color: white;
+        }
+        .dataset:hover{
+          background-color: rgb(158,202,225);
+          cursor: pointer;
+        }
+        #house_building {
+        }
+        #house_prices {
+            top: 350px;
+        }
+        #energy_efficiency {
+            top: 575px;
+        }
+        .circles:hover {
+          cursor: pointer;
         }
         #tooltip {
             position: absolute;
@@ -63,21 +98,36 @@
         }
         #tooltip a{
             text-decoration: none
-         }
+         }       
     </style>
     
     <!-- d3.js library -->
     <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://fgnass.github.io/spin.js/spin.min.js"></script>
     
 </head>
 
 <body>
-    <div id="buttons">
-            <button id="change_period">2011-12 / 2012-13</button>
+    <h1>Housing Market in England</h1>
+    
+    <div id="datasets">
+        <button class="dataset" id="house_building">
+            <h2>House building</h2>
+            <p>Comparison between the number of houses completed and started by district </br> 2012-2013</p>
+        </button>
+        </br>
+        <button class="dataset" id="house_prices">
+            <h2>House prices</h2>
+            <p>Evolution of the ratio median house price to median earnings by district </br> between 2011 and 2012</p>
+        </button>
+        <button class="dataset" id="energy_efficiency">
+            <h2>Energy efficiency</h2>
+            <p>Evolution of domestic Energy Performance Certificates Lodged on Register - By Floor Area </br> between 2013-Q1 and 2014-Q1</p>
+        </button>
     </div>
     
     <div id="tooltip" class="hidden">
-        <p> </p>
+        <p></p>
     </div>
     
     <script>
@@ -85,28 +135,34 @@
             height = 700;
 
         var padding = 40;
+        
+        var formatSi = d3.format(".4");
 
         var svg = d3.select("body")
                     .append("svg")
+                    .attr("id", "svg")
                     .attr("width", width)
                     .attr("height", height);
 
         // SPARQL query to get data from two sources in a .CSV + NOMIS API
-        var datasource_2012_2013 = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0APREFIX+homelessness%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhomelessness%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3Fstarts+%3Fcompletions+%3Fhomelessness+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fcompletions%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++compl%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A+++++++++++++++++++building%3AcompletionsObs+%3Fcompletions+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fstarts%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A++++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A++++++++++++++++++++starts%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A++++++++++++++++++++building%3AstartsObs+%3Fstarts+.%0D%0A+++%7D%0D%0A%0D%0A++++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhomelessness%2Fhouseholds-accommodated-per-1000%2Ftemporary-housing-types%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+quarter%3A2012-Q1+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++homelessness%3AhouseholdsAccommodatedPer1000Obs+%3Fhomelessness+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fstarts%29"
-        var datasource_2011_2012 = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0APREFIX+homelessness%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhomelessness%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3Fstarts+%3Fcompletions+%3Fhomelessness+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fcompletions%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+year%3A2011-2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++compl%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A+++++++++++++++++++building%3AcompletionsObs+%3Fcompletions+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fstarts%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A++++++++++++++++++++time%3ArefPeriod+year%3A2011-2012+%3B+%0D%0A++++++++++++++++++++starts%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A++++++++++++++++++++building%3AstartsObs+%3Fstarts+.%0D%0A+++%7D%0D%0A%0D%0A++++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhomelessness%2Fhouseholds-accommodated-per-1000%2Ftemporary-housing-types%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+quarter%3A2011-Q2+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++homelessness%3AhouseholdsAccommodatedPer1000Obs+%3Fhomelessness+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fstarts%29";
-        var nomisData = "http://www.nomisweb.co.uk/api/v01/dataset/NM_57_1.data.csv?geography=1946157057...1946157382&date=latest&item=3&measures=20100&select=date_name,geography_name,geography_code,item_name,measures_name,obs_value,obs_status_name"
+        var datasource_house_building = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+yr%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fyear%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0APREFIX+stock%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2Fdwelling-stock%2F%3E%0D%0APREFIX+market%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3Fstarts+%3Fcompletions+%3FdwellingStock+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fcompletions%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++compl%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A+++++++++++++++++++building%3AcompletionsObs+%3Fcompletions+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fstarts%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A++++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A++++++++++++++++++++starts%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A++++++++++++++++++++building%3AstartsObs+%3Fstarts+.%0D%0A+++%7D%0D%0A%0D%0A++++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fdwelling-stock%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++stock%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fhousing-market%2Fdwelling-stock%2Ftenure%2Ftotal%3E+%3B%0D%0A+++++++++++++++++++market%3AdwellingStockObs+%3FdwellingStock+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fstarts%29";
+        var datasource_house_prices = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+yr%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fyear%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+stock%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2Fdwelling-stock%2F%3E%0D%0APREFIX+market%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3FratioPriceEarnings2011+%3FratioPriceEarnings2012+%3FdwellingStock+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fratio%2Fhouse-prices-ratio%2Fmed-house-price-to-earnings%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+yr%3A2011+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++market%3AratioObs+%3FratioPriceEarnings2011+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fratio%2Fhouse-prices-ratio%2Fmed-house-price-to-earnings%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++market%3AratioObs+%3FratioPriceEarnings2012+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fdwelling-stock%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++stock%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fhousing-market%2Fdwelling-stock%2Ftenure%2Ftotal%3E+%3B%0D%0A+++++++++++++++++++market%3AdwellingStockObs+%3FdwellingStock+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3FratioPriceEarnings2012%29";
+        var datasource_energy_efficiency = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+yr%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fyear%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0APREFIX+stock%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2Fdwelling-stock%2F%3E%0D%0APREFIX+market%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2F%3E%0D%0APREFIX+energy%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fbuilding-standards-and-sustainability%2Fenergy-efficiency-and-performance%2Fdomestic%2F%3E%0D%0APREFIX+area%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fbuilding-standards-and-sustainability%2Fenergy-efficiency-and-performance%2Fdomestic%2Fcertificates-lodged-by-area%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3FenergyCertificate2013Q1+%3FenergyCertificate2014Q1+%3FdwellingStock+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fbuilding-standards-and-sustainability%2Fenergy-efficiency-and-performance%2Fdomestic%2Fcertificates-lodged-by-area%2Farea%2Ftotal%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+quarter%3A2013-Q1+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++area%3Aarea+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fbuilding-standards-and-sustainability%2Fenergy-efficiency-and-performance%2Fdomestic%2Fcertificates-lodged-by-area%2Farea%2Ftotal%3E+%3B%0D%0A+++++++++++++++++++energy%3AcertificatesLodgedByAreaObs+%3FenergyCertificate2013Q1+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fbuilding-standards-and-sustainability%2Fenergy-efficiency-and-performance%2Fdomestic%2Fcertificates-lodged-by-area%2Farea%2Ftotal%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+quarter%3A2014-Q1+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++area%3Aarea+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fbuilding-standards-and-sustainability%2Fenergy-efficiency-and-performance%2Fdomestic%2Fcertificates-lodged-by-area%2Farea%2Ftotal%3E+%3B%0D%0A+++++++++++++++++++energy%3AcertificatesLodgedByAreaObs+%3FenergyCertificate2014Q1+.%0D%0A+++%7D%0D%0A%0D%0A++++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fdwelling-stock%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++stock%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fhousing-market%2Fdwelling-stock%2Ftenure%2Ftotal%3E+%3B%0D%0A+++++++++++++++++++market%3AdwellingStockObs+%3FdwellingStock+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3FenergyCertificate2014Q1%29";
         
-        var datasource =    [datasource_2011_2012,
-                            datasource_2012_2013
+        var nomisData = "http://www.nomisweb.co.uk/api/v01/dataset/NM_47_5.data.csv?geography=1941962753...1941962958,1946157057...1946157436&date=latest&variable=MAKE|Employment%20rate%20-%20working%20age|28|22&measures=20599,21001,21002,21003&select=date_name,geography_name,geography_code,variable_name,measures_name,obs_value,obs_status_name"
+        
+        var datasource =    [datasource_house_building,
+                            datasource_house_prices,
+                            datasource_energy_efficiency
                             ];
                             
         // Used to select the dataset to show                        
-        var ds = datasource.length - 1;
+        var ds = 0;
         
         
         // Color - jobs density data
         var color = d3.scale.log()
-                            .domain([0.2, 2])
+                            .domain([50, 95])
                             .range(['rgb(240,59,32)','rgb(255,237,160)']);
 
         // Loading data     
@@ -151,7 +207,8 @@
                         } else {
                             return yScale(0.7 * d.starts);
                         }
-                    })); 
+                    })
+                ); 
 
             // Merge dataset with NOMIS dataset
             d3.csv(nomisData, function (nomis) {
@@ -164,19 +221,22 @@
                         var nomisGss = nomis[j].GEOGRAPHY_CODE;
 
                         if (dataGss == nomisGss) {
-
-                            // Copy job density value into the ODC csv
-                            data[i].job = nomis[j].OBS_VALUE;
-                            break;
+                            // Select the data
+                            if (nomis[j].MEASURES_NAME == "Variable") {
+                                // Copy job density value into the ODC csv
+                                data[i].job = nomis[j].OBS_VALUE;
+                                break;
+                            }
                         } 
                     }
                 }
-   
+                
                 // Pass data to svg
                 svg.selectAll("circle")
                     .data(data)
                     .enter()
                     .append("circle")
+                    .attr("class", "circles")
                     .attr("cx", function (d) {
                         if (parseInt(d.starts) === 0) {
                             return xScale(5);
@@ -192,7 +252,7 @@
                         }
                     })
                     .attr("r", function (d) {
-                        return (2.5 + 0.8 * Math.sqrt(d.homelessness));
+                        return (2.5 + 0.008 * Math.sqrt(d.dwellingStock));
                     })
 				    .style("fill", function (d) {
 				        return color(d.job);
@@ -200,7 +260,7 @@
                     .on("click", function (d, i) {
                         var tooltip = d3.select("#tooltip");
                         if (tooltip.classed("hidden") == true) {
-                            
+                          
                             // Define and show the tooltip
                             
                             // Get this circle's x/y values, then augment for the tooltip
@@ -235,16 +295,15 @@
                                     '</br>' + 
 
                                     '<span>' +
-                                    "Numbers of households accommodated by local authorities per 1000 households " 
+                                    "Dwelling Stock " 
                                     + (d.observation3).split("/")[7] + " : " + 
                                     '</span>' +
 
-                                    '<a href = "' + d.observation3 + '" target="_blank">' + d.homelessness + '</a>' + 
+                                    '<a href = "' + d.observation3 + '" target="_blank">' + d.dwellingStock + '</a>' + 
                                     '</br>' + 
 
                                     '<span>' +
-                                        '<a href = "http://www.nomisweb.co.uk/articles/649.aspx" target="_blank">' + "Jobs density" + '</a>' + 
-                                    " : " + 
+                                        "Employment rate: " + 
                                     '</span>' +
 
                                     d.job
@@ -252,9 +311,8 @@
 
                             // Show the tooltip
                             d3.select("#tooltip").classed("hidden", false);
-                        } else {
-                            
-                            // Hide the tooltip
+                        }  else {
+                            //Hide the tooltip
                             d3.select("#tooltip").classed("hidden", true);
                         }
                     })
@@ -274,14 +332,22 @@
                     d3.select(this)
                         .attr("stroke", "none");
                 }
- 
-                // Axis and legends 
 
+                // Loader
+                svg.append("image")
+                    .attr("class", "load")
+                    .attr("xlink:href", "loader.gif")
+                    .attr("x", width / 2)
+                    .attr("y", height / 2)
+                    .attr("width", 32)
+                    .attr("height", 32)
+                    .style("display", "none");
+               
+                // Axis and legends 
                 // Axis
-                var formatSi = d3.format(".4");
 
                 svg.append("g")
-                    .attr("class", "axis") 
+                    .attr("class", "x axis") 
                     .attr("transform", "translate(0," + (height - padding) + ")")     
                     .call(d3.svg.axis()
                     .scale(xScale)
@@ -291,13 +357,14 @@
                     }))
                    .append("text")
                     .attr("class", "label")
+                    .attr("id", "xAxisLabel")
                     .attr("x", width - padding)
                     .attr("y", -6)
                     .style("text-anchor", "end")
-                    .text("started building house");
+                    .text("Started building house 2012-13");
 
                 svg.append("g")
-                    .attr("class", "axis") 
+                    .attr("class", "y axis") 
                     .attr("transform", "translate(" + padding + ",0)")
                     .call(d3.svg.axis()
                     .scale(yScale)
@@ -307,12 +374,13 @@
                     }))
                    .append("text")
                     .attr("class", "label")
+                    .attr("id", "yAxisLabel")
                     .attr("transform", "rotate(-90)")
                     .attr("x", - padding)
                     .attr("y", 6)
                     .attr("dy", ".71em")
                     .style("text-anchor", "end")
-                    .text("completed building house");
+                    .text("Completed building house 2012-13");
 
                 // Legend area
                 svg.append("rect")
@@ -328,7 +396,7 @@
                     .attr("y", height - padding - 35)
                     .attr("dy", ".35em")
                     .style("text-anchor", "end")
-                    .text("completed = +/- 30% started");
+                    .text("Y = +/- 30% X");
                     
                 // Legend circles 
                 svg.append("rect")
@@ -372,28 +440,26 @@
                 
                 svg.append("text")
                     .attr("class", "label")
-                    .attr("x", width - 70)
+                    .attr("x", width - 60)
                     .attr("y", height - padding - 90)
                     .attr("dy", ".35em")
                     .style("text-anchor", "end")
-                    .text("Jobs density");  
+                    .text("Employment rate");  
             })
         });
 
-        // When clicking on the button you change the period of time of the dataset 
-        
-        d3.select("#change_period")
-            .on("click", function() { 
+        // When clicking on the House Prices' button 
+        d3.select("#house_prices")
+            .on("click", function () {
+                d3.select("image")
+                    .style("display", "block")
+                    .style("top");
                 
-                if (ds === datasource.length - 1) {
-                    ds = 0;
-                } else {
-                    ds++;
-                }
-                
+                ds = 1;
+
                 d3.csv(datasource[ds], function (data) {
 
-                    
+
                     // Merge dataset with NOMIS dataset
                     d3.csv(nomisData, function (nomis) {
                         for (var i = 0; i < data.length; i++) {
@@ -405,14 +471,355 @@
                                 var nomisGss = nomis[j].GEOGRAPHY_CODE;
 
                                 if (dataGss == nomisGss) {
-
-                                    // Copy job density value into the ODC csv
-                                    data[i].job = nomis[j].OBS_VALUE;
-                                    break;
+                                    // Select the data
+                                    if (nomis[j].MEASURES_NAME == "Variable") {
+                                        // Copy job density value into the ODC csv
+                                        data[i].job = nomis[j].OBS_VALUE;
+                                        break;
+                                    }
                                 } 
                             }
                         }
-                        // Scaling
+                        d3.select("image").style("display", "none");
+                        
+                        
+                        // Update scale domain
+                        var xScale = d3.scale.log()
+                                                .domain([2.7, 15])
+                                                .range([padding, width - padding]);
+                        var yScale = d3.scale.log()
+                                                .domain([2.7, 15])
+                                                .range([height - padding, padding]);
+
+                        // Update axis
+                        svg.select(".x.axis")
+                            .transition()
+                            .duration(1000)
+                            .call(d3.svg.axis()
+                                .scale(xScale)
+                                .orient("bottom")
+                                .ticks(5, function(d, i) {
+                                            return formatSi(d);
+                                        })
+                            );
+
+                        svg.select(".y.axis")
+                            .transition()
+                            .duration(1000)
+                            .call(d3.svg.axis()
+                                .scale(yScale)
+                                .orient("left")
+                                .ticks(5, function(d, i) {
+                                            return formatSi(d);
+                                        })
+                            );
+                            
+                        svg.select("#xAxisLabel")
+                            .text("Ratio Prices / Earnings 2012");
+                        svg.select("#yAxisLabel")
+                            .text("Ratio Prices / Earnings 2011"); 
+
+                        // Key function to bind data to element via gsscode
+                        var key = function(d) {
+                            return d.gssCode;
+                        };
+                        // Pass data to svg
+                        svg.selectAll("circle")
+                            .data(data, key)
+                            .transition()                     
+                            .duration(1000)
+                            .attr("cx", function (d) {
+                                if (parseInt(d.ratioPriceEarnings2012) === 0) {
+                                    return xScale(2);
+                                } else {
+                                    return xScale(d.ratioPriceEarnings2012);
+                                }
+                            })
+                            .attr("cy", function (d) {
+                                if (parseInt(d.ratioPriceEarnings2011) === 0) {
+                                    return yScale(2);
+                                } else {
+                                    return yScale(d.ratioPriceEarnings2011);
+                                }
+                            })
+                            .attr("r", function (d) {
+                                return (2.5 + 0.008 * Math.sqrt(d.dwellingStock));
+                            })
+                            .style("fill", function (d) {
+                                return color(d.job);
+                            })
+                            .transition()
+                            .duration(400);
+                            
+                        svg.selectAll("circle")
+                            .data(data, key)
+                            .on("click", function (d) {
+                                var tooltip = d3.select("#tooltip");
+                                if (tooltip.classed("hidden") == true) {
+                          
+                                    // Define and show the tooltip
+                            
+                                    // Get this circle's x/y values, then augment for the tooltip
+                                    var xPosition = 0;
+                                    if (parseFloat(d3.select(this).attr("cx")) < ((4 * width) / 5)) {
+                                        xPosition = parseFloat(d3.select(this).attr("cx")) + 15;
+                                    } else {
+                                        xPosition = parseFloat(d3.select(this).attr("cx")) - 25 - 185;
+                                    }
+                            
+                                    var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10;
+
+                                    // Update the tooltip position and value
+                                    d3.select("#tooltip")
+                                        .style("left", xPosition + "px")
+                                        .style("top", yPosition + "px")
+                                        .html(
+                                            '<h3>' + '<a href = "' + d.refArea + '" target="_blank">' + d.authorityName + '</a>' + 
+                                            '</h3>' + 
+
+                                            '<span>' + 
+                                            "Ratio median house prices / median earnings " + (d.observation).split("/")[7] + " : " + 
+                                            '</span>' +
+
+                                            '<a href = "' + d.observation + '" target="_blank">' + d.ratioPriceEarnings2011 + '</a>' + 
+                                            '</br>' +
+
+                                            '<span>' +
+                                            "Ratio median house prices / median earnings " + (d.observation2).split("/")[7] + " : " +  
+                                            '</span>' +
+
+                                            '<a href = "' + d.observation2 + '" target="_blank">' + d.ratioPriceEarnings2012 + '</a>' + 
+                                            '</br>' + 
+
+                                            '<span>' +
+                                            "Dwelling Stock " 
+                                            + (d.observation3).split("/")[7] + " : " + 
+                                            '</span>' +
+
+                                            '<a href = "' + d.observation3 + '" target="_blank">' + d.dwellingStock + '</a>' + 
+                                            '</br>' + 
+
+                                            '<span>' +
+                                            "Employment rate: " + 
+                                            '</span>' +
+                                            d.job
+                                        );
+
+                                    // Show the tooltip
+                                    d3.select("#tooltip").classed("hidden", false);
+                                }  else {
+                                    //Hide the tooltip
+                                    d3.select("#tooltip").classed("hidden", true);
+                                }
+                            });    
+                    });
+                });    
+            });
+
+        // When clicking on the Energy efficiency's button 
+        d3.select("#energy_efficiency")
+            .on("click", function () {
+                d3.select("image").style("display", "block");
+                ds = 2;
+    
+                d3.csv(datasource[ds], function (data) {
+
+        
+                    // Merge dataset with NOMIS dataset
+                    d3.csv(nomisData, function (nomis) {
+                        for (var i = 0; i < data.length; i++) {
+                            // Grab GSS code from ODC dataset
+                            var dataGss = data[i].gssCode;
+
+                            for (var j = 0; j < nomis.length; j++) {
+
+                                var nomisGss = nomis[j].GEOGRAPHY_CODE;
+
+                                if (dataGss == nomisGss) {
+                                    // Select the data
+                                    if (nomis[j].MEASURES_NAME == "Variable") {
+                                        // Copy job density value into the ODC csv
+                                        data[i].job = nomis[j].OBS_VALUE;
+                                        break;
+                                    }
+                                } 
+                            }
+                        }
+
+                        d3.select("image").style("display", "none");
+
+                        // Update scale domain
+                        var xScale = d3.scale.log()
+                                                .domain([25000, d3.max(data, function (d) {
+                                                        return parseInt(d.energyCertificate2014Q1) ;
+                                                    })
+                                                ])
+                                                .range([padding, width - padding]);
+                        var yScale = d3.scale.log()
+                                                .domain([25000, d3.max(data, function (d) {
+                                                        return parseInt(d.energyCertificate2013Q1) ;
+                                                    })
+                                                ])
+                                                .range([height - padding, padding]);
+                        // Update axis
+                        svg.select(".x.axis")
+                            .transition()
+                            .duration(1000)
+                            .call(d3.svg.axis()
+                                .scale(xScale)
+                                .orient("bottom")
+                                .ticks(5, function(d, i) {
+                                    return formatSi(d);
+                                })
+                            );
+
+                        svg.select(".y.axis")
+                            .transition()
+                            .duration(1000)
+                            .call(d3.svg.axis()
+                                .scale(yScale)
+                                .orient("left")
+                                .ticks(5, function(d, i) {
+                                    return formatSi(d);
+                                })
+                            );
+
+                        svg.select("#xAxisLabel")
+                            .text("Energy Certificate 2014-Q1");
+                        svg.select("#yAxisLabel")
+                            .text("Energy Certificate 2013-Q1");
+
+                        // Key function to bind data to element via gsscode
+                        var key = function(d) {
+                            return d.gssCode;
+                        };
+                        
+                        // Pass data to svg
+                        svg.selectAll("circle")
+                            .data(data, key)
+                            .transition()                     
+                            .duration(1000)
+                            .attr("cx", function (d) {
+                                if (parseInt(d.starts) === 0) {
+                                    return xScale(2);
+                                } else {
+                                    return xScale(d.energyCertificate2014Q1);
+                                }
+                            })
+                            .attr("cy", function (d) {
+                                if (parseInt(d.completions) === 0) {
+                                    return yScale(2);
+                                } else {
+                                    return yScale(d.energyCertificate2013Q1);
+                                }
+                            })
+                            .attr("r", function (d) {
+                                return (2.5 + 0.008 * Math.sqrt(d.dwellingStock));
+                            })
+                            .style("fill", function (d) {
+                                return color(d.job);
+                            })
+                            .transition()
+                            .duration(400);
+                        
+                        svg.selectAll("circle")
+                            .data(data, key)
+                            .on("click", function (d) {
+                                var tooltip = d3.select("#tooltip");
+                                if (tooltip.classed("hidden") == true) {
+                          
+                                    // Define and show the tooltip
+                            
+                                    // Get this circle's x/y values, then augment for the tooltip
+                                    var xPosition = 0;
+                                    if (parseFloat(d3.select(this).attr("cx")) < ((4 * width) / 5)) {
+                                        xPosition = parseFloat(d3.select(this).attr("cx")) + 15;
+                                    } else {
+                                        xPosition = parseFloat(d3.select(this).attr("cx")) - 25 - 185;
+                                    }
+                            
+                                    var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10;
+
+                                    // Update the tooltip position and value
+                                    d3.select("#tooltip")
+                                        .style("left", xPosition + "px")
+                                        .style("top", yPosition + "px")
+                                        .html(
+                                            '<h3>' + '<a href = "' + d.refArea + '" target="_blank">' + d.authorityName + '</a>' + 
+                                            '</h3>' + 
+
+                                            '<span>' + 
+                                            "Floor area covered by Domestic Energy Performance Certificates " + (d.observation).split("/")[9] + " : " + 
+                                            '</span>' +
+
+                                            '<a href = "' + d.observation + '" target="_blank">' + d.energyCertificate2013Q1 + '</a>' + 
+                                            '</br>' +
+
+                                            '<span>' +
+                                            "Floor area covered by Domestic Energy Performance Certificates " + (d.observation2).split("/")[9] + " : " +  
+                                            '</span>' +
+
+                                            '<a href = "' + d.observation2 + '" target="_blank">' + d.energyCertificate2014Q1 + '</a>' + 
+                                            '</br>' + 
+
+                                            '<span>' +
+                                            "Dwelling Stock " 
+                                            + (d.observation3).split("/")[7] + " : " + 
+                                            '</span>' +
+
+                                            '<a href = "' + d.observation3 + '" target="_blank">' + d.dwellingStock + '</a>' + 
+                                            '</br>' + 
+
+                                            '<span>' +
+                                            "Employment rate: " + 
+                                            '</span>' +
+                                            d.job
+                                        );
+
+                                    // Show the tooltip
+                                    d3.select("#tooltip").classed("hidden", false);
+                                }  else {
+                                    //Hide the tooltip
+                                    d3.select("#tooltip").classed("hidden", true);
+                                }
+                            });                
+                    })
+                });
+            });
+
+        // When clicking on the House buildings' button 
+        d3.select("#house_building")
+            .on("click", function () {
+                d3.select("image").style("display", "block");
+                ds = 0;
+    
+                d3.csv(datasource[ds], function (data) {
+
+        
+                    // Merge dataset with NOMIS dataset
+                    d3.csv(nomisData, function (nomis) {
+                        for (var i = 0; i < data.length; i++) {
+                            // Grab GSS code from ODC dataset
+                            var dataGss = data[i].gssCode;
+
+                            for (var j = 0; j < nomis.length; j++) {
+
+                                var nomisGss = nomis[j].GEOGRAPHY_CODE;
+
+                                if (dataGss == nomisGss) {
+                                    // Select the data
+                                    if (nomis[j].MEASURES_NAME == "Variable") {
+                                        // Copy job density value into the ODC csv
+                                        data[i].job = nomis[j].OBS_VALUE;
+                                        break;
+                                    }
+                                } 
+                            }
+                        }
+
+                        d3.select("image").style("display", "none");
+
+                        // Update scale domain
                         var xScale = d3.scale.log()
                                                 .domain([10, d3.max(data, function (d) {
                                                                 return parseInt(d.starts) ;
@@ -425,39 +832,130 @@
                                                             })
                                                         ])
                                                 .range([height - padding, padding]);
-                    
                                                 
+                        // Updte axis
+                        svg.select(".x.axis")
+                            .transition()
+                            .duration(1000)
+                            .call(d3.svg.axis()
+                                .scale(xScale)
+                                .orient("bottom")
+                                .ticks(5, function(d, i) {
+                                    return formatSi(d);
+                                }));
+
+                        svg.select(".y.axis")
+                            .transition()
+                            .duration(1000)
+                            .call(d3.svg.axis()
+                                .scale(yScale)
+                                .orient("left")
+                                .ticks(5, function(d, i) {
+                                    return formatSi(d);
+                                })
+                            );
+                        
+                        svg.select("#xAxisLabel")
+                            .text("Started building house 2012-13");
+                        svg.select("#yAxisLabel")
+                            .text("Completed building house 2012-13");
+                                    
                         // Key function to bind data to element via gsscode
                         var key = function(d) {
                             return d.gssCode;
                         };
+                        
                         // Pass data to svg
                         svg.selectAll("circle")
                             .data(data, key)
                             .transition()                     
-                            .duration(4000)
+                            .duration(1000)
                             .attr("cx", function (d) {
                                 if (parseInt(d.starts) === 0) {
-                                    return xScale(5);
+                                    return xScale(2);
                                 } else {
                                     return xScale(d.starts);
                                 }
                             })
                             .attr("cy", function (d) {
                                 if (parseInt(d.completions) === 0) {
-                                    return yScale(5);
+                                    return yScale(2);
                                 } else {
                                     return yScale(d.completions);
                                 }
                             })
                             .attr("r", function (d) {
-                                return (2.5 +  0.8 * Math.sqrt(d.homelessness));
+                                return (2.5 + 0.008 * Math.sqrt(d.dwellingStock));
                             })
                             .style("fill", function (d) {
                                 return color(d.job);
                             })
                             .transition()
                             .duration(400);
+                        
+                        svg.selectAll("circle")
+                            .data(data, key)
+                            .on("click", function (d) {
+                                var tooltip = d3.select("#tooltip");
+                                if (tooltip.classed("hidden") == true) {
+                          
+                                    // Define and show the tooltip
+                            
+                                    // Get this circle's x/y values, then augment for the tooltip
+                                    var xPosition = 0;
+                                    if (parseFloat(d3.select(this).attr("cx")) < ((4 * width) / 5)) {
+                                        xPosition = parseFloat(d3.select(this).attr("cx")) + 15;
+                                    } else {
+                                        xPosition = parseFloat(d3.select(this).attr("cx")) - 25 - 185;
+                                    }
+                            
+                                    var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10;
+
+                                    // Update the tooltip position and value
+                                    d3.select("#tooltip")
+                                        .style("left", xPosition + "px")
+                                        .style("top", yPosition + "px")
+                                        .html(
+                                            '<h3>' + '<a href = "' + d.refArea + '" target="_blank">' + d.authorityName + '</a>' + 
+                                            '</h3>' + 
+
+                                            '<span>' + 
+                                            "Completed house building " + (d.observation).split("/")[7] + " : " + 
+                                            '</span>' +
+
+                                            '<a href = "' + d.observation + '" target="_blank">' + d.completions + '</a>' + 
+                                            '</br>' +
+
+                                            '<span>' +
+                                            "Started house building " + (d.observation).split("/")[7] + " : " +  
+                                            '</span>' +
+
+                                            '<a href = "' + d.observation2 + '" target="_blank">' + d.starts + '</a>' + 
+                                            '</br>' + 
+
+                                            '<span>' +
+                                            "Dwelling Stock " 
+                                            + (d.observation3).split("/")[7] + " : " + 
+                                            '</span>' +
+
+                                            '<a href = "' + d.observation3 + '" target="_blank">' + d.dwellingStock + '</a>' + 
+                                            '</br>' + 
+
+                                            '<span>' +
+                                            "Employment rate: " + 
+                                            '</span>' +
+
+                                            d.job
+                                        );
+
+                                    // Show the tooltip
+                                    d3.select("#tooltip").classed("hidden", false);
+                                }  else {
+                                    //Hide the tooltip
+                                    d3.select("#tooltip").classed("hidden", true);
+                                }
+                            });
+                
                     })
                 });
             });
