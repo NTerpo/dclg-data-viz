@@ -1,0 +1,59 @@
+PREFIX time: <http://opendatacommunities.org/def/ontology/time/>
+PREFIX geo: <http://opendatacommunities.org/def/ontology/geography/>
+PREFIX gov: <http://opendatacommunities.org/def/local-government/>
+PREFIX osgeo:  <http://data.ordnancesurvey.co.uk/ontology/admingeo/>
+PREFIX yr: <http://reference.data.gov.uk/id/year/>
+PREFIX year: <http://reference.data.gov.uk/id/government-year/>
+PREFIX quarter: <http://reference.data.gov.uk/id/quarter/>
+PREFIX period: <http://opendatacommunities.org/def/ontology/time/>
+PREFIX cube: <http://purl.org/linked-data/cube#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX building: <http://opendatacommunities.org/def/ontology/house-building/>
+PREFIX starts: <http://opendatacommunities.org/def/ontology/house-building/starts/>
+PREFIX compl: <http://opendatacommunities.org/def/ontology/house-building/completions/>
+PREFIX stock: <http://opendatacommunities.org/def/ontology/housing-market/dwelling-stock/>
+PREFIX market: <http://opendatacommunities.org/def/ontology/housing-market/>
+PREFIX households: <http://opendatacommunities.org/def/ontology/homelessness/>
+PREFIX accommodated: <http://opendatacommunities.org/def/concept/homelessness/households-accommodated/>
+
+SELECT ?authorityName ?households ?peratio ?dwellingStock ?gssCode ?refArea ?observation ?observation2 ?observation3 WHERE { 
+
+   GRAPH <http://opendatacommunities.org/graph/homelessness/households-accommodated-per-1000/temporary-housing-types> { 
+      ?observation rdf:type cube:Observation ;
+                   time:refPeriod quarter:2013-Q4 ; 
+                   geo:refArea ?refArea ; 
+                   households:householdsAccommodatedPer1000Obs ?households .
+   }
+GRAPH <http://opendatacommunities.org/graph/housing-market/ratio/house-prices-ratio/med-house-price-to-earnings> { 
+      ?observation2 rdf:type cube:Observation ;
+                   time:refPeriod yr:2012 ; 
+                   geo:refArea ?refArea ; 
+                   market:ratioObs ?peratio .
+   }
+
+   GRAPH <http://opendatacommunities.org/graph/housing-market/dwelling-stock/tenure> { 
+      ?observation3 rdf:type cube:Observation ;
+                   period:refPeriod yr:2012 ; 
+                   geo:refArea ?refArea ; 
+                   stock:tenure <http://opendatacommunities.org/def/concept/housing-market/dwelling-stock/tenure/total> ;
+                   market:dwellingStockObs ?dwellingStock .
+   }
+
+   GRAPH <http://opendatacommunities.org/graph/ontology/geography/ons-labels> {
+     ?refArea osgeo:gssCode ?gssCode ; 
+              gov:isGovernedBy ?authority .
+   }
+
+   GRAPH <http://opendatacommunities.org/graph/local-authorities> { 
+      ?authority rdfs:label ?authorityName .
+   }
+
+} ORDER BY(?peratio)
+
+
+PERMALINK : 
+"http://opendatacommunities.org/sparql?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+yr%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fyear%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0APREFIX+stock%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2Fdwelling-stock%2F%3E%0D%0APREFIX+market%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2F%3E%0D%0APREFIX+households%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhomelessness%2F%3E%0D%0APREFIX+accommodated%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fhomelessness%2Fhouseholds-accommodated%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3Fhouseholds+%3Fperatio+%3FdwellingStock+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhomelessness%2Fhouseholds-accommodated-per-1000%2Ftemporary-housing-types%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+quarter%3A2013-Q4+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++households%3AhouseholdsAccommodatedPer1000Obs+%3Fhouseholds+.%0D%0A+++%7D%0D%0AGRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fratio%2Fhouse-prices-ratio%2Fmed-house-price-to-earnings%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++market%3AratioObs+%3Fperatio+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fdwelling-stock%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++stock%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fhousing-market%2Fdwelling-stock%2Ftenure%2Ftotal%3E+%3B%0D%0A+++++++++++++++++++market%3AdwellingStockObs+%3FdwellingStock+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fperatio%29"
+
+API : 
+"http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+yr%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fyear%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0APREFIX+stock%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2Fdwelling-stock%2F%3E%0D%0APREFIX+market%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2F%3E%0D%0APREFIX+households%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhomelessness%2F%3E%0D%0APREFIX+accommodated%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fhomelessness%2Fhouseholds-accommodated%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3Fhouseholds+%3Fperatio+%3FdwellingStock+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhomelessness%2Fhouseholds-accommodated-per-1000%2Ftemporary-housing-types%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+quarter%3A2013-Q4+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++households%3AhouseholdsAccommodatedPer1000Obs+%3Fhouseholds+.%0D%0A+++%7D%0D%0AGRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fratio%2Fhouse-prices-ratio%2Fmed-house-price-to-earnings%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++market%3AratioObs+%3Fperatio+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fdwelling-stock%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++stock%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fhousing-market%2Fdwelling-stock%2Ftenure%2Ftotal%3E+%3B%0D%0A+++++++++++++++++++market%3AdwellingStockObs+%3FdwellingStock+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fperatio%29"
