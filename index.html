@@ -98,11 +98,12 @@
         }
         #tooltip a{
             text-decoration: none
-         }
+         }       
     </style>
     
     <!-- d3.js library -->
     <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="http://fgnass.github.io/spin.js/spin.min.js"></script>
     
 </head>
 
@@ -126,7 +127,7 @@
     </div>
     
     <div id="tooltip" class="hidden">
-        <p> </p>
+        <p></p>
     </div>
     
     <script>
@@ -139,6 +140,7 @@
 
         var svg = d3.select("body")
                     .append("svg")
+                    .attr("id", "svg")
                     .attr("width", width)
                     .attr("height", height);
 
@@ -331,8 +333,17 @@
                         .attr("stroke", "none");
                 }
 
+                // Loader
+                svg.append("image")
+                    .attr("class", "load")
+                    .attr("xlink:href", "3.gif")
+                    .attr("x", width / 2)
+                    .attr("y", height / 2)
+                    .attr("width", 32)
+                    .attr("height", 32)
+                    .style("display", "none");
+               
                 // Axis and legends 
-
                 // Axis
 
                 svg.append("g")
@@ -440,11 +451,15 @@
         // When clicking on the House Prices' button 
         d3.select("#house_prices")
             .on("click", function () {
+                d3.select("image")
+                    .style("display", "block")
+                    .style("top");
+                
                 ds = 1;
-    
+
                 d3.csv(datasource[ds], function (data) {
 
-        
+
                     // Merge dataset with NOMIS dataset
                     d3.csv(nomisData, function (nomis) {
                         for (var i = 0; i < data.length; i++) {
@@ -465,6 +480,8 @@
                                 } 
                             }
                         }
+                        d3.select("image").style("display", "none");
+                        
                         
                         // Update scale domain
                         var xScale = d3.scale.log()
@@ -602,6 +619,7 @@
         // When clicking on the Energy efficiency's button 
         d3.select("#energy_efficiency")
             .on("click", function () {
+                d3.select("image").style("display", "block");
                 ds = 2;
     
                 d3.csv(datasource[ds], function (data) {
@@ -627,6 +645,9 @@
                                 } 
                             }
                         }
+
+                        d3.select("image").style("display", "none");
+
                         // Update scale domain
                         var xScale = d3.scale.log()
                                                 .domain([25000, d3.max(data, function (d) {
@@ -769,6 +790,7 @@
         // When clicking on the House buildings' button 
         d3.select("#house_building")
             .on("click", function () {
+                d3.select("image").style("display", "block");
                 ds = 0;
     
                 d3.csv(datasource[ds], function (data) {
@@ -794,7 +816,9 @@
                                 } 
                             }
                         }
-                        
+
+                        d3.select("image").style("display", "none");
+
                         // Update scale domain
                         var xScale = d3.scale.log()
                                                 .domain([10, d3.max(data, function (d) {
