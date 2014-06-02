@@ -310,7 +310,7 @@
                             d3.select("#tooltip").classed("hidden", false);
                         }  else {
                             //Hide the tooltip
-                            removeTooltip();
+                            d3.select("#tooltip").classed("hidden", true);
                         }
                     })
                     .on("mouseover", over)
@@ -328,11 +328,6 @@
                 function out (d, i) {
                     d3.select(this)
                         .attr("stroke", "none");
-                }
-                
-                // removeTooltip function
-                function removeTooltip () {
-                  d3.select("#tooltip").classed("hidden", true);
                 }
 
                 // Axis and legends 
@@ -467,39 +462,37 @@
                                 } 
                             }
                         }
+                        
                         // Update scale domain
                         var xScale = d3.scale.log()
-                                                .domain([2.7, d3.max(data, function (d) {
-                                                    return parseInt(d.ratioPriceEarnings2012) ;
-                                                })
-                                            ])
+                                                .domain([2.7, 15])
                                                 .range([padding, width - padding]);
                         var yScale = d3.scale.log()
-                                                .domain([2.7, d3.max(data, function (d) {
-                                                    return parseInt(d.ratioPriceEarnings2011) ;
-                                                })
-                                            ])
+                                                .domain([2.7, 15])
                                                 .range([height - padding, padding]);
-                        // Updte axis
+
+                        // Update axis
                         svg.select(".x.axis")
                             .transition()
                             .duration(1000)
                             .call(d3.svg.axis()
-                                        .scale(xScale)
-                                        .orient("bottom")
-                                        .ticks(5, function(d, i) {
+                                .scale(xScale)
+                                .orient("bottom")
+                                .ticks(5, function(d, i) {
                                             return formatSi(d);
-                                        }));
+                                        })
+                            );
 
                         svg.select(".y.axis")
                             .transition()
                             .duration(1000)
                             .call(d3.svg.axis()
-                    .scale(yScale)
-                    .orient("left")
-                    .ticks(5, function(d, i) {
-                        return formatSi(d);
-                    }));
+                                .scale(yScale)
+                                .orient("left")
+                                .ticks(5, function(d, i) {
+                                            return formatSi(d);
+                                        })
+                            );
                                     
                         // Key function to bind data to element via gsscode
                         var key = function(d) {
@@ -531,48 +524,73 @@
                                 return color(d.job);
                             })
                             .transition()
-                            .duration(400)
-                            // ne fonctionne pas...
-                            .on("click", function (d, i) {
-                                d3.select("#tooltip")
-                                    .html(
-                                        '<h3>' + '<a href = "' + d.refArea + '" target="_blank">' + d.authorityName + '</a>' + 
-                                        '</h3>' + 
+                            .duration(400);
+                            
+                        svg.selectAll("circle")
+                            .data(data, key)
+                            .on("click", function (d) {
+                                var tooltip = d3.select("#tooltip");
+                                if (tooltip.classed("hidden") == true) {
+                          
+                                    // Define and show the tooltip
+                            
+                                    // Get this circle's x/y values, then augment for the tooltip
+                                    var xPosition = 0;
+                                    if (parseFloat(d3.select(this).attr("cx")) < ((4 * width) / 5)) {
+                                        xPosition = parseFloat(d3.select(this).attr("cx")) + 15;
+                                    } else {
+                                        xPosition = parseFloat(d3.select(this).attr("cx")) - 25 - 185;
+                                    }
+                            
+                                    var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10;
 
-                                        '<span>' + 
-                                        "Ratio median house prices / median earnings " + (d.observation).split("/")[7] + " : " + 
-                                        '</span>' +
+                                    // Update the tooltip position and value
+                                    d3.select("#tooltip")
+                                        .style("left", xPosition + "px")
+                                        .style("top", yPosition + "px")
+                                        .html(
+                                            '<h3>' + '<a href = "' + d.refArea + '" target="_blank">' + d.authorityName + '</a>' + 
+                                            '</h3>' + 
 
-                                        '<a href = "' + d.observation + '" target="_blank">' + d.ratioPriceEarnings2011 + '</a>' + 
-                                        '</br>' +
+                                            '<span>' + 
+                                            "Ratio median house prices / median earnings " + (d.observation).split("/")[7] + " : " + 
+                                            '</span>' +
 
-                                        '<span>' +
-                                        "Ratio median house prices / median earnings " + (d.observation2).split("/")[7] + " : " +  
-                                        '</span>' +
+                                            '<a href = "' + d.observation + '" target="_blank">' + d.ratioPriceEarnings2011 + '</a>' + 
+                                            '</br>' +
 
-                                        '<a href = "' + d.observation2 + '" target="_blank">' + d.ratioPriceEarnings2012 + '</a>' + 
-                                        '</br>' + 
+                                            '<span>' +
+                                            "Ratio median house prices / median earnings " + (d.observation2).split("/")[7] + " : " +  
+                                            '</span>' +
 
-                                        '<span>' +
-                                        "Dwelling Stock " 
-                                        + (d.observation3).split("/")[7] + " : " + 
-                                        '</span>' +
+                                            '<a href = "' + d.observation2 + '" target="_blank">' + d.ratioPriceEarnings2012 + '</a>' + 
+                                            '</br>' + 
 
-                                        '<a href = "' + d.observation3 + '" target="_blank">' + d.dwellingStock + '</a>' + 
-                                        '</br>' + 
+                                            '<span>' +
+                                            "Dwelling Stock " 
+                                            + (d.observation3).split("/")[7] + " : " + 
+                                            '</span>' +
 
-                                        '<span>' +
+                                            '<a href = "' + d.observation3 + '" target="_blank">' + d.dwellingStock + '</a>' + 
+                                            '</br>' + 
+
+                                            '<span>' +
                                             "Employment rate: " + 
-                                        '</span>' +
-                                        d.job
-                                    );
-                                })
-                        
-                    })
-                });
-            }
-        );
-        
+                                            '</span>' +
+                                            d.job
+                                        );
+
+                                    // Show the tooltip
+                                    d3.select("#tooltip").classed("hidden", false);
+                                }  else {
+                                    //Hide the tooltip
+                                    d3.select("#tooltip").classed("hidden", true);
+                                }
+                            });    
+                    });
+                });    
+            });
+
         // When clicking on the Energy efficiency's button 
         d3.select("#energy_efficiency")
             .on("click", function () {
@@ -614,7 +632,7 @@
                                                     })
                                                 ])
                                                 .range([height - padding, padding]);
-                        // Updte axis
+                        // Update axis
                         svg.select(".x.axis")
                             .transition()
                             .duration(1000)
@@ -666,13 +684,73 @@
                             })
                             .transition()
                             .duration(400);
-                
-                
+                        
+                        svg.selectAll("circle")
+                            .data(data, key)
+                            .on("click", function (d) {
+                                var tooltip = d3.select("#tooltip");
+                                if (tooltip.classed("hidden") == true) {
+                          
+                                    // Define and show the tooltip
+                            
+                                    // Get this circle's x/y values, then augment for the tooltip
+                                    var xPosition = 0;
+                                    if (parseFloat(d3.select(this).attr("cx")) < ((4 * width) / 5)) {
+                                        xPosition = parseFloat(d3.select(this).attr("cx")) + 15;
+                                    } else {
+                                        xPosition = parseFloat(d3.select(this).attr("cx")) - 25 - 185;
+                                    }
+                            
+                                    var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10;
+
+                                    // Update the tooltip position and value
+                                    d3.select("#tooltip")
+                                        .style("left", xPosition + "px")
+                                        .style("top", yPosition + "px")
+                                        .html(
+                                            '<h3>' + '<a href = "' + d.refArea + '" target="_blank">' + d.authorityName + '</a>' + 
+                                            '</h3>' + 
+
+                                            '<span>' + 
+                                            "Floor area covered by Domestic Energy Performance Certificates " + (d.observation).split("/")[9] + " : " + 
+                                            '</span>' +
+
+                                            '<a href = "' + d.observation + '" target="_blank">' + d.energyCertificate2013Q1 + '</a>' + 
+                                            '</br>' +
+
+                                            '<span>' +
+                                            "Floor area covered by Domestic Energy Performance Certificates " + (d.observation2).split("/")[9] + " : " +  
+                                            '</span>' +
+
+                                            '<a href = "' + d.observation2 + '" target="_blank">' + d.energyCertificate2014Q1 + '</a>' + 
+                                            '</br>' + 
+
+                                            '<span>' +
+                                            "Dwelling Stock " 
+                                            + (d.observation3).split("/")[7] + " : " + 
+                                            '</span>' +
+
+                                            '<a href = "' + d.observation3 + '" target="_blank">' + d.dwellingStock + '</a>' + 
+                                            '</br>' + 
+
+                                            '<span>' +
+                                            "Employment rate: " + 
+                                            '</span>' +
+                                            d.job
+                                        );
+
+                                    // Show the tooltip
+                                    d3.select("#tooltip").classed("hidden", false);
+                                }  else {
+                                    //Hide the tooltip
+                                    d3.select("#tooltip").classed("hidden", true);
+                                }
+                            });                
                     })
                 });
             }
         );
-        
+
         // When clicking on the House buildings' button 
         d3.select("#house_building")
             .on("click", function () {
@@ -767,7 +845,69 @@
                             })
                             .transition()
                             .duration(400);
-                
+                        
+                        svg.selectAll("circle")
+                            .data(data, key)
+                            .on("click", function (d) {
+                                var tooltip = d3.select("#tooltip");
+                                if (tooltip.classed("hidden") == true) {
+                          
+                                    // Define and show the tooltip
+                            
+                                    // Get this circle's x/y values, then augment for the tooltip
+                                    var xPosition = 0;
+                                    if (parseFloat(d3.select(this).attr("cx")) < ((4 * width) / 5)) {
+                                        xPosition = parseFloat(d3.select(this).attr("cx")) + 15;
+                                    } else {
+                                        xPosition = parseFloat(d3.select(this).attr("cx")) - 25 - 185;
+                                    }
+                            
+                                    var yPosition = parseFloat(d3.select(this).attr("cy")) / 2 + height / 10;
+
+                                    // Update the tooltip position and value
+                                    d3.select("#tooltip")
+                                        .style("left", xPosition + "px")
+                                        .style("top", yPosition + "px")
+                                        .html(
+                                            '<h3>' + '<a href = "' + d.refArea + '" target="_blank">' + d.authorityName + '</a>' + 
+                                                                                '</h3>' + 
+
+                                                                                '<span>' + 
+                                                                                "Completed house building " + (d.observation).split("/")[7] + " : " + 
+                                                                                '</span>' +
+
+                                                                                '<a href = "' + d.observation + '" target="_blank">' + d.completions + '</a>' + 
+                                                                                '</br>' +
+
+                                                                                '<span>' +
+                                                                                "Started house building " + (d.observation).split("/")[7] + " : " +  
+                                                                                '</span>' +
+
+                                                                                '<a href = "' + d.observation2 + '" target="_blank">' + d.starts + '</a>' + 
+                                                                                '</br>' + 
+
+                                                                                '<span>' +
+                                                                                "Dwelling Stock " 
+                                                                                + (d.observation3).split("/")[7] + " : " + 
+                                                                                '</span>' +
+
+                                                                                '<a href = "' + d.observation3 + '" target="_blank">' + d.dwellingStock + '</a>' + 
+                                                                                '</br>' + 
+
+                                                                                '<span>' +
+                                                                                    "Employment rate: " + 
+                                                                                '</span>' +
+
+                                                                                d.job
+                                        );
+
+                                    // Show the tooltip
+                                    d3.select("#tooltip").classed("hidden", false);
+                                }  else {
+                                    //Hide the tooltip
+                                    d3.select("#tooltip").classed("hidden", true);
+                                }
+                            });
                 
                     })
                 });
