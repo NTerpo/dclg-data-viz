@@ -61,7 +61,7 @@
         }
         #house_building {
         }
-        #xxx {
+        #house_price {
             top: 350px;
         }
         #households_pe_ratio {
@@ -113,12 +113,12 @@
     <div id="datasets">
         <button class="dataset" id="house_building">
             <h2>House building</h2>
-            <p>Comparison between the number of houses completed and started by district </br> 2012-2013</p>
+            <p>Number of houses completed against started by district </br> 2012-13</p>
         </button>
         </br>
-        <button class="dataset" id="xxx">
-            <h2>XXX</h2>
-            <p>xxxxxxxxxx</br> date</p>
+        <button class="dataset" id="house_price">
+            <h2>House Price</h2>
+            <p>Evolution of the price/earnings ratio against number of houses started</br> 2011-12</p>
         </button>
         <button class="dataset" id="households_pe_ratio">
             <h2>Households Accommodation</h2>
@@ -146,13 +146,13 @@
 
         // SPARQL query to get data from two sources in a .CSV + NOMIS API
         var datasource_house_building = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+yr%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fyear%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+type%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0APREFIX+stock%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2Fdwelling-stock%2F%3E%0D%0APREFIX+market%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3Fstarts+%3Fcompletions+%3FdwellingStock+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fcompletions%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++compl%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A+++++++++++++++++++building%3AcompletionsObs+%3Fcompletions+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fstarts%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A++++++++++++++++++++time%3ArefPeriod+year%3A2012-2013+%3B+%0D%0A++++++++++++++++++++starts%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A++++++++++++++++++++building%3AstartsObs+%3Fstarts+.%0D%0A+++%7D%0D%0A%0D%0A++++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fdwelling-stock%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++stock%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fhousing-market%2Fdwelling-stock%2Ftenure%2Ftotal%3E+%3B%0D%0A+++++++++++++++++++market%3AdwellingStockObs+%3FdwellingStock+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+++type%3Atype+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2FLocalAuthority%3E+%3B%0D%0A+++++++++++++++++++rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fstarts%29";
-        var datasource_house_prices = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+yr%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fyear%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+stock%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2Fdwelling-stock%2F%3E%0D%0APREFIX+market%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3FratioPriceEarnings2011+%3FratioPriceEarnings2012+%3FdwellingStock+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fratio%2Fhouse-prices-ratio%2Fmed-house-price-to-earnings%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+yr%3A2011+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++market%3AratioObs+%3FratioPriceEarnings2011+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fratio%2Fhouse-prices-ratio%2Fmed-house-price-to-earnings%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++market%3AratioObs+%3FratioPriceEarnings2012+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fdwelling-stock%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++stock%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fhousing-market%2Fdwelling-stock%2Ftenure%2Ftotal%3E+%3B%0D%0A+++++++++++++++++++market%3AdwellingStockObs+%3FdwellingStock+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3FratioPriceEarnings2012%29";
+        var datasource_house_price = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+yr%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fyear%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+type%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0APREFIX+stock%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2Fdwelling-stock%2F%3E%0D%0APREFIX+market%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3Fstarts+%3Fperatio2012+%3Fperatio2011+%3FdwellingStock+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+%3Fobservation4+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhouse-building%2Fstarts%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A++++++++++++++++++++time%3ArefPeriod+year%3A2011-2012+%3B+%0D%0A++++++++++++++++++++starts%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fgeneral-concepts%2Ftenure%2Fall%3E+%3B%0D%0A++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A++++++++++++++++++++building%3AstartsObs+%3Fstarts+.%0D%0A+++%7D%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fratio%2Fhouse-prices-ratio%2Fmed-house-price-to-earnings%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A++++++++++++++++++++++time%3ArefPeriod+yr%3A2012+%3B+%0D%0A++++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A++++++++++++++++++++++market%3AratioObs+%3Fperatio2012+.%0D%0A++++++%7D%0D%0A++++++%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fratio%2Fhouse-prices-ratio%2Fmed-house-price-to-earnings%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++++++++time%3ArefPeriod+yr%3A2011+%3B+%0D%0A+++++++++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++++++++market%3AratioObs+%3Fperatio2011+.%0D%0A+++++++++%7D++%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fdwelling-stock%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation4+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++stock%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fhousing-market%2Fdwelling-stock%2Ftenure%2Ftotal%3E+%3B%0D%0A+++++++++++++++++++market%3AdwellingStockObs+%3FdwellingStock+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+++type%3Atype+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2FLocalAuthority%3E+%3B%0D%0A+++++++++++++++++++rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fstarts%29";
         var datasource_households_pe_ratio = "http://opendatacommunities.org/sparql.csv?query=PREFIX+time%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+geo%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fgeography%2F%3E%0D%0APREFIX+gov%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Flocal-government%2F%3E%0D%0APREFIX+osgeo%3A++%3Chttp%3A%2F%2Fdata.ordnancesurvey.co.uk%2Fontology%2Fadmingeo%2F%3E%0D%0APREFIX+yr%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fyear%2F%3E%0D%0APREFIX+year%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fgovernment-year%2F%3E%0D%0APREFIX+quarter%3A+%3Chttp%3A%2F%2Freference.data.gov.uk%2Fid%2Fquarter%2F%3E%0D%0APREFIX+period%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Ftime%2F%3E%0D%0APREFIX+cube%3A+%3Chttp%3A%2F%2Fpurl.org%2Flinked-data%2Fcube%23%3E%0D%0APREFIX+rdf%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F1999%2F02%2F22-rdf-syntax-ns%23%3E%0D%0APREFIX+rdfs%3A+%3Chttp%3A%2F%2Fwww.w3.org%2F2000%2F01%2Frdf-schema%23%3E%0D%0APREFIX+building%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2F%3E%0D%0APREFIX+starts%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fstarts%2F%3E%0D%0APREFIX+compl%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhouse-building%2Fcompletions%2F%3E%0D%0APREFIX+stock%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2Fdwelling-stock%2F%3E%0D%0APREFIX+market%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhousing-market%2F%3E%0D%0APREFIX+households%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fontology%2Fhomelessness%2F%3E%0D%0APREFIX+accommodated%3A+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fhomelessness%2Fhouseholds-accommodated%2F%3E%0D%0A%0D%0ASELECT+%3FauthorityName+%3Fhouseholds+%3Fperatio+%3FdwellingStock+%3FgssCode+%3FrefArea+%3Fobservation+%3Fobservation2+%3Fobservation3+WHERE+%7B+%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhomelessness%2Fhouseholds-accommodated-per-1000%2Ftemporary-housing-types%3E+%7B+%0D%0A++++++%3Fobservation+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+quarter%3A2013-Q4+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++households%3AhouseholdsAccommodatedPer1000Obs+%3Fhouseholds+.%0D%0A+++%7D%0D%0AGRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fratio%2Fhouse-prices-ratio%2Fmed-house-price-to-earnings%3E+%7B+%0D%0A++++++%3Fobservation2+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++time%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++market%3AratioObs+%3Fperatio+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fhousing-market%2Fdwelling-stock%2Ftenure%3E+%7B+%0D%0A++++++%3Fobservation3+rdf%3Atype+cube%3AObservation+%3B%0D%0A+++++++++++++++++++period%3ArefPeriod+yr%3A2012+%3B+%0D%0A+++++++++++++++++++geo%3ArefArea+%3FrefArea+%3B+%0D%0A+++++++++++++++++++stock%3Atenure+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fdef%2Fconcept%2Fhousing-market%2Fdwelling-stock%2Ftenure%2Ftotal%3E+%3B%0D%0A+++++++++++++++++++market%3AdwellingStockObs+%3FdwellingStock+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Fontology%2Fgeography%2Fons-labels%3E+%7B%0D%0A+++++%3FrefArea+osgeo%3AgssCode+%3FgssCode+%3B+%0D%0A++++++++++++++gov%3AisGovernedBy+%3Fauthority+.%0D%0A+++%7D%0D%0A%0D%0A+++GRAPH+%3Chttp%3A%2F%2Fopendatacommunities.org%2Fgraph%2Flocal-authorities%3E+%7B+%0D%0A++++++%3Fauthority+rdfs%3Alabel+%3FauthorityName+.%0D%0A+++%7D%0D%0A%0D%0A%7D+ORDER+BY%28%3Fperatio%29";
         
         var nomisData = "http://www.nomisweb.co.uk/api/v01/dataset/NM_17_5.data.csv?geography=1946157057...1946157382&date=latest&variable=MAKE|Employment%20rate%20-%20aged%2016-64|28|22&measures=20599,21001,21002,21003&select=geography_code,measures_name,obs_value"
         
         var datasource =    [datasource_house_building,
-                            datasource_house_prices,
+                            datasource_house_price,
                             datasource_households_pe_ratio
                             ];
                             
@@ -167,7 +167,6 @@
 
         // Loading data     
         d3.csv(datasource[ds], function (data) {
-            console.log(data.length);
             // Scaling
             var xScale = d3.scale.log()
                                     .domain([10, d3.max(data, function (d) {
@@ -212,7 +211,6 @@
 
             // Merge dataset with NOMIS dataset
             d3.csv(nomisData, function (nomis) {
-                console.log(nomis.length)
                 for (var i = 0; i < data.length; i++) {
                     // Grab GSS code from ODC dataset
                     var dataGss = data[i].gssCode;
@@ -383,6 +381,13 @@
                     .style("text-anchor", "end")
                     .text("Completed building house 2012-13");
 
+                // used for the house price visualization
+                svg.append("line")
+                    .attr("class", "line")
+                    .attr("stroke-width", 0.8)
+                    .attr("stroke", "black")
+                    .style("display", "none");    
+                    
                 // Legend area
                 svg.append("rect")
                     .attr("x", width - 58)
@@ -445,21 +450,22 @@
                     .attr("y", height - padding - 90)
                     .attr("dy", ".35em")
                     .style("text-anchor", "end")
-                    .text("Employment rate");  
+                    .text("Employment rate"); 
             })
         });
 
         // When clicking on the House Prices' button 
-        d3.select("#house_prices")
+        d3.select("#house_price")
             .on("click", function () {
-                d3.select("image")
-                    .style("display", "block")
-                    .style("top");
+                d3.select("image").style("display", "block");
                 
                 ds = 1;
 
                 d3.csv(datasource[ds], function (data) {
-
+                    // Key function to bind data to element via gsscode
+                    var key = function(d) {
+                        return d.gssCode;
+                    };
 
                     // Merge dataset with NOMIS dataset
                     d3.csv(nomisData, function (nomis) {
@@ -486,10 +492,19 @@
                         
                         // Update scale domain
                         var xScale = d3.scale.log()
-                                                .domain([2.7, 15])
+                                                .domain([10, d3.max(data, function (d) {
+                                                                return parseInt(d.starts) ;
+                                                            })
+                                                        ])
                                                 .range([padding, width - padding]);
-                        var yScale = d3.scale.log()
-                                                .domain([2.7, 15])
+                        var yScale = d3.scale.linear()
+                                                .domain([d3.min(data, function (d) {
+                                                                return (parseFloat(d.peratio2012) - parseFloat(d.peratio2011));
+                                                            }), 
+                                                        d3.max(data, function (d) {
+                                                                return (parseFloat(d.peratio2012) - parseFloat(d.peratio2011));
+                                                            })
+                                                        ])
                                                 .range([height - padding, padding]);
 
                         // Update axis
@@ -516,32 +531,34 @@
                             );
                             
                         svg.select("#xAxisLabel")
-                            .text("Ratio Prices / Earnings 2012");
+                            .text("Started building house 2011-12");
                         svg.select("#yAxisLabel")
-                            .text("Ratio Prices / Earnings 2011"); 
+                            .text("DELTA Ratio Prices/Earnings 2011-12"); 
 
-                        // Key function to bind data to element via gsscode
-                        var key = function(d) {
-                            return d.gssCode;
-                        };
+                        
+
+                        d3.select(".area").style("display", "none");
+                        d3.select(".line")
+                            .attr("x1", padding)
+                            .attr("y1", yScale(0))
+                            .attr("x2", width - padding)
+                            .attr("y2", yScale(0))
+                            .style("display", "block");
+                            
                         // Pass data to svg
                         svg.selectAll("circle")
                             .data(data, key)
                             .transition()                     
                             .duration(1000)
                             .attr("cx", function (d) {
-                                if (parseInt(d.ratioPriceEarnings2012) === 0) {
-                                    return xScale(2);
+                                if (parseInt(d.starts) === 0) {
+                                    return xScale(5);
                                 } else {
-                                    return xScale(d.ratioPriceEarnings2012);
+                                    return xScale(d.starts);
                                 }
                             })
                             .attr("cy", function (d) {
-                                if (parseInt(d.ratioPriceEarnings2011) === 0) {
-                                    return yScale(2);
-                                } else {
-                                    return yScale(d.ratioPriceEarnings2011);
-                                }
+                                return yScale(d.peratio2012 - d.peratio2011);
                             })
                             .attr("r", function (d) {
                                 return (2.5 + 0.008 * Math.sqrt(d.dwellingStock));
@@ -579,17 +596,24 @@
                                             '</h3>' + 
 
                                             '<span>' + 
-                                            "Ratio median house prices / median earnings " + (d.observation).split("/")[7] + " : " + 
+                                            "Started house building " + (d.observation).split("/")[7] + " : " + 
                                             '</span>' +
 
-                                            '<a href = "' + d.observation + '" target="_blank">' + d.ratioPriceEarnings2011 + '</a>' + 
+                                            '<a href = "' + d.observation + '" target="_blank">' + d.starts + '</a>' + 
                                             '</br>' +
 
                                             '<span>' +
-                                            "Ratio median house prices / median earnings " + (d.observation2).split("/")[7] + " : " +  
+                                            "Ratio of median house price to median earnings 2012 " + (d.observation2).split("/")[7] + " : " +  
                                             '</span>' +
 
-                                            '<a href = "' + d.observation2 + '" target="_blank">' + d.ratioPriceEarnings2012 + '</a>' + 
+                                            '<a href = "' + d.observation2 + '" target="_blank">' + d.peratio2012 + '</a>' + 
+                                            '</br>' + 
+                                            
+                                            '<span>' +
+                                            "Ratio of median house price to median earnings 2011 " + (d.observation3).split("/")[7] + " : " +  
+                                            '</span>' +
+
+                                            '<a href = "' + d.observation3 + '" target="_blank">' + d.peratio2011 + '</a>' + 
                                             '</br>' + 
 
                                             '<span>' +
@@ -621,11 +645,15 @@
         d3.select("#households_pe_ratio")
             .on("click", function () {
                 d3.select("image").style("display", "block");
+                
                 ds = 2;
     
                 d3.csv(datasource[ds], function (data) {
-                    
-        
+                    // Key function to bind data to element via gsscode
+                    var key = function(d) {
+                        return d.gssCode;
+                    };
+
                     // Merge dataset with NOMIS dataset
                     d3.csv(nomisData, function (nomis) {
                         for (var i = 0; i < data.length; i++) {
@@ -647,21 +675,20 @@
                             }
                         }
                         d3.select("image").style("display", "none");
-
                         // Update scale domain
                         var xScale = d3.scale.log()
                                                 .domain([d3.min(data, function (d) {
-                                                            return parseInt(d.peratio) ;
+                                                            return parseFloat(d.peratio) ;
                                                         }), 
                                                         d3.max(data, function (d) {
-                                                            return parseInt(d.peratio) ;
+                                                            return parseFloat(d.peratio) ;
                                                     })
                                                 ])
                                                 .range([padding, width - padding]);
-                        var yScale = d3.scale.linear()
-                                                .domain([0, 
+                        var yScale = d3.scale.log()
+                                                .domain([0.01, 
                                                         d3.max(data, function (d) {
-                                                            return parseInt(d.households) ;
+                                                            return parseFloat(d.households) ;
                                                     })
                                                 ])
                                                 .range([height - padding, padding]);
@@ -693,10 +720,8 @@
                         svg.select("#yAxisLabel")
                             .text("Households in temporary accommodation per 1000 households");
 
-                        // Key function to bind data to element via gsscode
-                        var key = function(d) {
-                            return d.gssCode;
-                        };
+                        d3.select(".area").style("display", "none");
+                        d3.select(".line").style("display", "none");
                         
                         // Pass data to svg
                         svg.selectAll("circle")
@@ -707,7 +732,7 @@
                                 return xScale(d.peratio);
                             })
                             .attr("cy", function (d) {
-                                if (parseInt(d.households) === 0) {
+                                if (parseFloat(d.households) === 0) {
                                     return yScale(0.001);
                                 } else {
                                     return yScale(d.households);
@@ -791,11 +816,15 @@
         d3.select("#house_building")
             .on("click", function () {
                 d3.select("image").style("display", "block");
+                
                 ds = 0;
-    
+                
                 d3.csv(datasource[ds], function (data) {
+                    // Key function to bind data to element via gsscode
+                    var key = function(d) {
+                        return d.gssCode;
+                    };
 
-        
                     // Merge dataset with NOMIS dataset
                     d3.csv(nomisData, function (nomis) {
                         for (var i = 0; i < data.length; i++) {
@@ -818,7 +847,6 @@
                         }
 
                         d3.select("image").style("display", "none");
-
                         // Update scale domain
                         var xScale = d3.scale.log()
                                                 .domain([10, d3.max(data, function (d) {
@@ -860,10 +888,8 @@
                         svg.select("#yAxisLabel")
                             .text("Completed building house 2012-13");
                                     
-                        // Key function to bind data to element via gsscode
-                        var key = function(d) {
-                            return d.gssCode;
-                        };
+                        d3.select(".area").style("display", "block");
+                        d3.select(".line").style("display", "none");                        
                         
                         // Pass data to svg
                         svg.selectAll("circle")

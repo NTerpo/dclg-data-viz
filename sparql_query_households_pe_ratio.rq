@@ -25,7 +25,7 @@ SELECT ?authorityName ?households ?peratio ?dwellingStock ?gssCode ?refArea ?obs
                    geo:refArea ?refArea ; 
                    households:householdsAccommodatedPer1000Obs ?households .
    }
-GRAPH <http://opendatacommunities.org/graph/housing-market/ratio/house-prices-ratio/med-house-price-to-earnings> { 
+   GRAPH <http://opendatacommunities.org/graph/housing-market/ratio/house-prices-ratio/med-house-price-to-earnings> { 
       ?observation2 rdf:type cube:Observation ;
                    time:refPeriod yr:2012 ; 
                    geo:refArea ?refArea ; 
