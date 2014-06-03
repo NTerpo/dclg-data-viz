@@ -6,17 +6,15 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 
 [Demo](http://jsfiddle.net/nicolasterpolilli/up4vW/8/embedded/result/)
 
-* X axis = Permanent dwellings started, 2011-12 / 2012-13 
-* Y axis = Permanent dwellings completed, 2011-12 / 2012-13 
-* Circles = Local authorities
-* Radius = Numbers of households accommodated by local authorities per 1000 households 2012-Q1
-* Color = Function of 2012 jobs density, logarithmic scale
+* Circles = Local authorities (authorities that form the lower tier or only tier of local government: so district councils, unitary authorities, metropolitan districts and London boroughs - but not county councils)
+* Radius = Numbers of dwellings, 2012
+* Color = Function of employment rate - aged 16-64, 2013, logarithmic scale
 * Tooltip onclick with links to ressources URI
-* Logarithmic scale
 
 ## Informations
 
 * SPARQL query to get data from datasets via Open Data Communities API :
+    * [Number of dwellings by tenure and district](http://opendatacommunities.org/data/housing-market/dwelling-stock/tenure)
     * [Permanent dwellings started, 2009/10 to 2012/13, England, District By Tenure](http://opendatacommunities.org/data/house-building/starts/tenure)
     * [Permanent dwellings completed, 2009/10 to 2012/13, England, District By Tenure](http://opendatacommunities.org/data/house-building/completions/tenure)
     * [Households in temporary accommodation per 1000 households, 2011 Q2 to 2013 Q4, England, District](http://opendatacommunities.org/data/homelessness/households-accommodated-per-1000/temporary-housing-types)
