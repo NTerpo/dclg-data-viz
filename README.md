@@ -24,3 +24,9 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
     * [Help to use NOMIS API](https://github.com/the-frey/odc_nomis)
 * d3.js for visualization
 * [ColorBrewer2](http://colorbrewer2.org)
+
+## Tutorial
+
+* [Tutorial](https://github.com/NTerpo/DCLG_data_visualization/blob/master/tutorial.md)
+* [Tutorial code](https://github.com/NTerpo/DCLG_data_visualization/blob/master/tutorial.html)
+* [Tutorial result](http://jsfiddle.net/nicolasterpolilli/7ed26/5/embedded/result/)
