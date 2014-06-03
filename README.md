@@ -20,8 +20,9 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
     * [Permanent dwellings started, 2009/10 to 2012/13, England, District By Tenure](http://opendatacommunities.org/data/house-building/starts/tenure)
     * [Permanent dwellings completed, 2009/10 to 2012/13, England, District By Tenure](http://opendatacommunities.org/data/house-building/completions/tenure)
     * [Households in temporary accommodation per 1000 households, 2011 Q2 to 2013 Q4, England, District](http://opendatacommunities.org/data/homelessness/households-accommodated-per-1000/temporary-housing-types)
+    * [Ratio of median house price to median earnings by district, from 1997](http://opendatacommunities.org/data/housing-market/ratio/house-prices-ratio/med-house-price-to-earnings)
 * NOMIS API :
-    * Jobs density, 2012, England, District
+    * Employment rate - aged 16-64, 2013, England, District
     * [Help to use NOMIS API](https://github.com/the-frey/odc_nomis)
 * d3.js for visualization
 * [ColorBrewer2](http://colorbrewer2.org)
