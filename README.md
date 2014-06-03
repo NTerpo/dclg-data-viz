@@ -4,7 +4,7 @@ Comparisons of data on housing held by the DCLG with data on housing from other 
 
 ## Demo
 
-[Demo](http://jsfiddle.net/nicolasterpolilli/up4vW/9/embedded/result/)
+[Demo](http://jsfiddle.net/nicolasterpolilli/up4vW/10/embedded/result/)
 
 * Circles = Local authorities (authorities that form the lower tier or only tier of local government: so district councils, unitary authorities, metropolitan districts and London boroughs - but not county councils)
 * Radius = Numbers of dwellings, 2012
