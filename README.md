@@ -1,6 +1,6 @@
-# UK DCLG data visualisation
+# UK Housing Market data visualisation
 
-Comparisons of data on housing held by the DCLG with data on housing from other sources, notably the nomisweb.co.uk site : NOMIS API.
+Comparisons of data on housing held by the [DCLG](http://opendatacommunities.org) with data on housing from the [NOMIS API](http://www.nomisweb.co.uk).
 
 ## Demo
 
