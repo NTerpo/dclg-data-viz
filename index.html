@@ -117,7 +117,7 @@
         </br>
         <button class="dataset" id="house_price">
             <h2>House Price</h2>
-            <p>Evolution of the price/earnings ratio against number of houses started</br> 2011-12</p>
+            <p>Price/earnings ratio against number of houses started</br> 2012</p>
         </button>
         <button class="dataset" id="households_pe_ratio">
             <h2>Households Accommodation</h2>
@@ -376,14 +376,7 @@
                     .attr("y", 6)
                     .attr("dy", ".71em")
                     .style("text-anchor", "end")
-                    .text("Completed building house 2012-13");
-
-                // used for the house price visualization
-                svg.append("line")
-                    .attr("class", "line")
-                    .attr("stroke-width", 0.8)
-                    .attr("stroke", "black")
-                    .style("display", "none");    
+                    .text("Completed building house 2012-13");  
                     
                 // Legend area
                 svg.append("rect")
@@ -494,13 +487,7 @@
                                                         ])
                                                 .range([padding, width - padding]);
                         var yScale = d3.scale.linear()
-                                                .domain([d3.min(data, function (d) {
-                                                                return (parseFloat(d.peratio2012) - parseFloat(d.peratio2011));
-                                                            }), 
-                                                        d3.max(data, function (d) {
-                                                                return (parseFloat(d.peratio2012) - parseFloat(d.peratio2011));
-                                                            })
-                                                        ])
+                                                .domain([0, 15])
                                                 .range([height - padding, padding]);
 
                         // Update axis
@@ -529,15 +516,9 @@
                         svg.select("#xAxisLabel")
                             .text("Started building house 2011-12");
                         svg.select("#yAxisLabel")
-                            .text("DELTA Ratio Prices/Earnings 2011-12"); 
+                            .text("Ratio Prices/Earnings 2012"); 
 
                         d3.select(".area").style("display", "none");
-                        d3.select(".line")
-                            .attr("x1", padding)
-                            .attr("y1", yScale(0))
-                            .attr("x2", width - padding)
-                            .attr("y2", yScale(0))
-                            .style("display", "block");
 
                         // Pass data to svg
                         svg.selectAll("circle")
@@ -552,7 +533,7 @@
                                 }
                             })
                             .attr("cy", function (d) {
-                                return yScale(d.peratio2012 - d.peratio2011);
+                                return yScale(d.peratio2012);
                             })
                             .attr("r", function (d) {
                                 return (2.5 + 0.008 * Math.sqrt(d.dwellingStock));
@@ -601,13 +582,6 @@
                                             '</span>' +
 
                                             '<a href = "' + d.observation2 + '" target="_blank">' + d.peratio2012 + '</a>' + 
-                                            '</br>' + 
-                                            
-                                            '<span>' +
-                                            "Ratio of median house price to median earnings " + (d.observation3).split("/")[7] + " : " +  
-                                            '</span>' +
-
-                                            '<a href = "' + d.observation3 + '" target="_blank">' + d.peratio2011 + '</a>' + 
                                             '</br>' + 
 
                                             '<span>' +
@@ -715,7 +689,6 @@
                             .text("Households in temporary accommodation per 1000 households");
 
                         d3.select(".area").style("display", "none");
-                        d3.select(".line").style("display", "none");
 
                         // Pass data to svg
                         svg.selectAll("circle")
@@ -883,7 +856,6 @@
                             .text("Completed building house 2012-13");
 
                         d3.select(".area").style("display", "block");
-                        d3.select(".line").style("display", "none");                        
 
                         // Pass data to svg
                         svg.selectAll("circle")
